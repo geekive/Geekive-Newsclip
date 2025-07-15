@@ -14,6 +14,10 @@ html {
     background: #fafafa;
 }
 
+.hide {
+    display: none;
+}
+
 .p-cb{
     display: flex;
     justify-content: space-between;
@@ -43,6 +47,7 @@ html {
     color: #fafafa;
     font-size: 2rem;
     margin-left: 20px;
+    user-select: none;
 }
 
 .header .sign-wrapper {
@@ -101,8 +106,105 @@ html {
 
 .timeline-container {
     padding-top: 80px;
+    width: fit-content;
     height: 100vh;
     transition: margin-top 0.5s ease;
+}
+
+.timeline-container .timeline-header {
+    display: flex;
+    height: 30px;
+    border-bottom: 1px solid #fafafa;
+    color: #fafafa;
+
+    background-color: red;
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    max-width: 99.15vw;
+}
+
+.timeline-container .timeline-header .topic{
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
+    background: #2c3e50;
+    color: #fafafa;
+    font-weight: 600;
+    user-select: none;
+    border-right: 1px solid #fafafa;
+    box-sizing: border-box;
+
+    position: sticky;
+    left: 0;
+    z-index: 5;
+}
+
+/* topic menu :: s */
+.topic-menu-wrapper {
+    position: relative;
+    margin-top: 4px;
+    margin-left: 5px;
+}
+
+#btn-topic-menu {
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+#btn-topic-menu:hover {
+    transform: rotate(20deg);
+}
+
+#topic-menu {
+    display: none;
+    position: absolute;
+    top: 5%;
+    left: 22px; /* 기어 오른쪽으로 띄우기 */
+    background-color: #fafafa;
+    color: black;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-size: 14px;
+    font-weight: 400;
+    z-index: 6;
+    border-radius: 4px;
+    min-width: 80px;
+}
+
+#topic-menu div {
+    padding: 6px 6px;
+    white-space: nowrap;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#topic-menu div:hover {
+    background-color: #D9D9D9;
+}
+
+.transparent-underline-input {
+    border: none;
+    border-bottom: 1px solid #D9D9D9; /* 아래 테두리만 */
+    background-color: transparent; /* 배경 투명 */
+    padding: 6px 4px;
+    outline: none;
+    color: #000; /* 입력 텍스트 색상 */
+    font-size: 14px;
+    width: 100px;
+    color: white;
+}
+
+.transparent-underline-input::placeholder {
+    color: #999; /* placeholder 색상 */
+}
+/* topic menu :: e */
+
+.timeline-container .timeline-header .timeline {
+    background: #2c3e50;
+    width: 100%;
+    font-weight: 600;
+    user-select: none;
 }
 
 .timeline-row-container {
@@ -112,19 +214,41 @@ html {
     position: relative;
 }
 
-.category-item {
-    width: 160px;
-    min-width: 160px;
-    max-width: 160px;
+.topic-item {
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
     background: #2c3e50;
     color: #fafafa;
     display: flex;
     align-items: center;
-    padding-left: 16px;
     font-weight: 600;
     user-select: none;
-    border-right: 1px solid #34495e;
+    border-right: 1px solid #fafafa;
     box-sizing: border-box;
+    cursor: n-resize;
+
+    position: sticky;
+    left: 0;
+    z-index: 4;
+}
+
+.topic-item #btn-topic-new-save,#btn-topic-new-cancel{
+    fill: #fafafa;
+    width: 16px;
+    height: 16px;
+    margin-top: 8px;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+.topic-item .btn-topic-delete-save{
+    fill: #fafafa;
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    margin-left: 5px;
+    cursor: pointer;
 }
 
 .timeline-row {
@@ -134,6 +258,11 @@ html {
     display: flex;
     align-items: center;
     position: relative;
+    cursor: pointer;
+}
+
+.timeline-row:hover {
+    background: #E8E8E8;
 }
 
 .timeline-line {
@@ -216,3 +345,190 @@ html {
     user-select: none;
     display: block;
 }
+
+/* modal :: s */
+.news-upsert-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    overflow: auto;
+    padding: 20px;
+    /* 화면 좁을 때 패딩으로 공간 확보 */
+    box-sizing: border-box;
+}
+
+.news-upsert-modal-overlay .upsert-modal {
+    background: white;
+    width: 960px;
+    max-width: 100%;
+    height: 645px;
+    max-height: 90vh;
+    padding: 24px;
+    border-radius: 10px;
+    display: flex;
+    gap: 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    min-height: 645px;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-left,
+.modal-right {
+    display: flex;
+    flex-direction: column;
+    padding: 0 24px;
+    box-sizing: border-box;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-left {
+    flex: 1;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-right {
+    flex: 1.7;
+    overflow-y: auto;
+    max-height: 84vh;
+    padding-right: 8px;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-divider {
+    width: 1px;
+    background: black;
+    margin: 0;
+}
+
+.news-upsert-modal-overlay .upsert-modal label {
+    font-weight: 600;
+    margin-top: 16px;
+    font-size: 14px;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-left span{
+    color: red;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-left label:first-of-type {
+    margin-top: 5px;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-right label:first-of-type {
+    margin-top: 5px;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-input,
+.modal-textarea {
+    margin-top: 6px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.news-upsert-modal-overlay .upsert-modal .modal-textarea {
+    height: 120px;
+    resize: none;
+}
+
+.news-upsert-modal-overlay .upsert-modal .btn-url-plus {
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #eee;
+    color: #333;
+    border: 1px solid #999;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.news-upsert-modal-overlay .upsert-modal .url-field {
+    margin-bottom: 10px;
+}
+
+.news-upsert-modal-overlay .upsert-modal .btn-upsert-modal-close {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.news-upsert-modal-overlay .upsert-modal .btn-upsert-modal-save {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.news-upsert-modal-overlay .upsert-modal .right-btn-wrapper {
+    display: none;
+}
+
+@media (max-width: 1000px) {
+    .news-upsert-modal-overlay .upsert-modal {
+        flex-wrap: wrap;
+        height: auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .modal-left,
+    .modal-right {
+        flex: 1 1 100%;
+        max-height: none;
+        overflow: visible;
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .modal-left {
+        padding: 0px 16px;
+        padding-top: 12px
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .modal-right {
+        padding: 0px 16px;
+        padding-top: 0px
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .modal-divider {
+        display: none;
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .modal-right {
+        overflow-y: visible;
+        max-height: none;
+        margin-top: 0px;
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .modal-right label:first-of-type {
+        margin-top: 16px;
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .left-btn-wrapper {
+        display: none;
+    }
+
+    .news-upsert-modal-overlay .upsert-modal .right-btn-wrapper {
+        display: block;
+    }
+}
+/* modal :: e */
