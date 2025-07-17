@@ -20,7 +20,7 @@ def insert_topic(topic_name):
         params = {
             "topic_uid"             : topic_uid
             , "topic_name"          : topic_name
-            , "registraion_date"    : datetime.now()
+            , "registration_date"    : datetime.now()
             , "registration_user"   : "system"
         }
         session.execute(sql_map["insertTopic"], params)

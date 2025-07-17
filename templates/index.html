@@ -9,14 +9,12 @@
     <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}"></script>
 </head>
 <body>
-
-
-
+    {% include 'modal/news_view.html' %}
 
     <!-- header / search :: s -->
     <div class="header p-cb">
         <div class="logo">
-            Newsclip <button class="open-modal-btn">모달 열기</button>
+            Newsclip
         </div>
         <div class="sign-wrapper p-cc">
             <div class="signin">
@@ -51,69 +49,7 @@
     </script>
     <!-- header / search :: e -->
 
-
-<!-- 모달 -->
-<div id="news-upsert-modal-overlay" class="news-upsert-modal-overlay" tabindex="-1">
-    <div class="upsert-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <!-- 왼쪽 -->
-        <div class="modal-left">
-            <label for="txt-topic-name">토픽</label>
-            <input id="txt-upsert-modal-topic-name" type="text" class="modal-input" disabled/>
-
-            <label for="txt-upsert-modal-title">제목&nbsp;<span>(필수)</span></label>
-            <input id="txt-upsert-modal-title" type="text" class="modal-input" placeholder="최대 10글자" maxlength="10"/>
-
-            <label for="txt-upsert-modal-date">날짜&nbsp;<span>(필수)</span></label>
-            <input id="txt-upsert-modal-date" type="date" class="modal-input" />
-
-            <label for="txt-upsert-modal-memo">메모</label>
-            <textarea id="txt-upsert-modal-memo" class="modal-textarea" placeholder="메모 입력"></textarea>
-
-            <label for="file-upsert-modal-thumbnail">썸네일 업로드</label>
-            <input id="file-upsert-modal-thumbnail" type="file" class="modal-input" accept="image/*"/>
-
-            <div class="left-btn-wrapper">
-                <button class="btn-upsert-modal-save">저장</button>
-                <button class="btn-upsert-modal-close">닫기</button>
-            </div>
-        </div>
-
-        <!-- 세로 구분선 -->
-        <div class="modal-divider"></div>
-
-        <!-- 오른쪽 -->
-        <div class="modal-right">
-            <label>관련 URL</label>
-            <button id="btn-url-plus" type="button" class="btn-url-plus">+ URL 추가</button>
-            <div id="url-container">
-                <div class="url-field"><input type="text" name="url[]" class="txt-upsert-modal-url modal-input" placeholder="URL 입력" /></div>
-                <div class="url-field"><input type="text" name="url[]" class="txt-upsert-modal-url modal-input" placeholder="URL 입력" /></div>
-                <div class="url-field"><input type="text" name="url[]" class="txt-upsert-modal-url modal-input" placeholder="URL 입력" /></div>
-            </div>
-            <div class="right-btn-wrapper">
-                <button class="btn-upsert-modal-save">저장</button>
-                <button class="btn-upsert-modal-close">닫기</button>
-            </div>
-        </div>
-    </div>
-    <input type="hidden" id="hid-upsert-modal-topic-uid">
-</div>
-
-  <script>
-    $(document).ready(function () {
-    const $modalOverlay = $('.news-upsert-modal-overlay');
-    const $urlContainer = $('#url-container');
-
-    $('#btn-url-plus').on('click', function () {
-        const $urlField = $('<div class="url-field"><input type="text" name="url[]" class="modal-input" placeholder="URL 입력" /></div>');
-        $urlContainer.append($urlField);
-    });
-    });
-  </script>
-
-
     <div class="timeline-container">
-
         <!-- timeline header :: s -->
         <div class="timeline-header">
             <div class="topic p-cc">
@@ -137,425 +73,9 @@
         </div>
         <!-- timeline header :: e -->
 
-        <div id="timeline-body">
-            <!-- 정치 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">
-                    정치
-                    <svg class="btn-topic-delete-save hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" data-topic-uid="SDFLKJAHFKJSH">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                    </svg>
-                </div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <!-- 7/1 ~ 7/30 -->
-                        <div class="date-slot">
-                            <div class="news-card">정당 회의<span class="news-date">7/1</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">법안 발의<span class="news-date">7/3</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">청문회 개최<span class="news-date">7/5</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">야당 반발<span class="news-date">7/7</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">대통령 담화<span class="news-date">7/9</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">의원 사퇴<span class="news-date">7/11</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">국회 마비<span class="news-date">7/14</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">임시 회기 소집<span class="news-date">7/17</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">정당 회동<span class="news-date">7/19</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">개헌 논의<span class="news-date">7/22</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">야당 보이콧<span class="news-date">7/25</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">의장 회견<span class="news-date">7/27</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">정기 국회 폐회<span class="news-date">7/30</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 경제 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">경제</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">금리 인상<span class="news-date">7/2</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">물가 상승 발표<span class="news-date">7/4</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">환율 급등<span class="news-date">7/6</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">무역 적자 확대<span class="news-date">7/8</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">부동산 대책<span class="news-date">7/10</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">세금 개편안<span class="news-date">7/12</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">재정 정책 발표<span class="news-date">7/14</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">소비 감소 우려<span class="news-date">7/16</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">일자리 통계 발표<span class="news-date">7/18</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">산업 성장률 발표<span class="news-date">7/20</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">중소기업 지원책<span class="news-date">7/22</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">물가 안정 방안<span class="news-date">7/24</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">부채 증가 분석<span class="news-date">7/26</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">하반기 경제 전망<span class="news-date">7/28</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 사회 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">사회</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">대형 사고 발생<span class="news-date">7/3</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">경찰 발표<span class="news-date">7/5</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">소방 대응 강화<span class="news-date">7/7</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">안전 규정 개정<span class="news-date">7/9</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">재난 훈련 실시<span class="news-date">7/11</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">시민단체 성명<span class="news-date">7/13</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">자원봉사 확대<span class="news-date">7/15</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">지자체 협조 요청<span class="news-date">7/17</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">재난 통신망 점검<span class="news-date">7/20</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">긴급 회의 개최<span class="news-date">7/22</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">피해 복구 완료<span class="news-date">7/24</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">현장 인터뷰<span class="news-date">7/26</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 문화 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">문화</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">영화제 개막<span class="news-date">7/4</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">전통축제 개최<span class="news-date">7/6</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">음악회 공연<span class="news-date">7/8</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">문학상 발표<span class="news-date">7/10</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">갤러리 개관<span class="news-date">7/12</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">지역 문화 행사<span class="news-date">7/14</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">독립영화 상영<span class="news-date">7/17</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">전시회 개막<span class="news-date">7/19</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">아트페어 개최<span class="news-date">7/21</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">도서관 행사<span class="news-date">7/23</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">문화정책 포럼<span class="news-date">7/25</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">뮤지컬 개막<span class="news-date">7/27</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 스포츠 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">스포츠</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot">
-                            <div class="news-card alt4">축구 경기<span class="news-date">7/1</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">올림픽 준비<span class="news-date">7/3</span></div>
-                            <div class="news-card alt1">선수 인터뷰<span class="news-date">7/3</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">야구 리그 개막<span class="news-date">7/5</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">테니스 대회<span class="news-date">7/7</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">e스포츠 결승전<span class="news-date">7/9</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">유소년 대회<span class="news-date">7/11</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">스포츠 지원 정책<span class="news-date">7/14</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">선수 복지 개선<span class="news-date">7/16</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">체육회 개편<span class="news-date">7/18</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">체력장 시범 운영<span class="news-date">7/20</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">월드컵 예선<span class="news-date">7/22</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">마라톤 대회<span class="news-date">7/24</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">농구 결승전<span class="news-date">7/26</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt1">국제 체전 폐막<span class="news-date">7/28</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 환경 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">환경</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot">
-                            <div class="news-card">기후 회의<span class="news-date">7/1</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt2">탄소 정책 발표<span class="news-date">7/3</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- IT/과학 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">IT/과학</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt3">신기술 공개<span class="news-date">7/2</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">AI 정책 발표<span class="news-date">7/4</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 교육 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">교육</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot">
-                            <div class="news-card alt1">교육 개편안<span class="news-date">7/1</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">대입 제도 논의<span class="news-date">7/3</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 국제 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">국제</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card alt4">정상 회담<span class="news-date">7/2</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">외교 회의<span class="news-date">7/4</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 국방 카테고리 -->
-            <div class="timeline-row-container">
-                <div class="topic-item p-cc">국방</div>
-                <div class="timeline-row">
-                    <div class="timeline-line"></div>
-                    <div class="cards-container">
-                        <div class="date-slot">
-                            <div class="news-card alt2">훈련 발표<span class="news-date">7/1</span></div>
-                        </div>
-                        <div class="date-slot"></div>
-                        <div class="date-slot">
-                            <div class="news-card">무기 도입 발표<span class="news-date">7/3</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- timeline body :: s -->
+        <div id="timeline-body"></div>
+        <!-- timeline body :: e -->
     </div>
     <script>
         class Timeline{
@@ -580,41 +100,47 @@
                     }
                     , modal : {
                         newsUpsert : {
-                            $ : $('#news-upsert-modal-overlay')
+                            $               : $('#news-modal-overlay')
+                            , urlContainer  : {$ : $('#upsert-modal-url-container')}
+                            , newsList      : {$ : $('#news-modal-news-list')}
                             , txt : {
-                                topicName   : {$ : $('#txt-upsert-modal-topic-name')}
-                                , title     : {$ : $('#txt-upsert-modal-title')}
-                                , date      : {$ : $('#txt-upsert-modal-date')}
-                                , memo      : {$ : $('#txt-upsert-modal-memo')}
-                                , url       : {selector : '.txt-upsert-modal-url'}
+                                topicName   : {$ : $('#txt-news-modal-topic-name')}
+                                , title     : {$ : $('#txt-news-modal-title')}
+                                , date      : {$ : $('#txt-news-modal-date')}
+                                , memo      : {$ : $('#txt-news-modal-memo')}
+                                , url       : {$ : $('#txt-news-modal-url')}
                             }
                             , hid : {
-                                topicUid : {$ : $('#hid-upsert-modal-topic-uid')}
+                                topicUid : {$ : $('#hid-news-modal-topic-uid')}
                             }
-                            , file : {
-                                thumbnail : {$ : $('#file-upsert-modal-thumbnail')}
+                            , rdo : {
+                                importance : {$ : $('input[name="rdo-news-modal-importance"]')}
                             }
                             , btn : {
-                                save    : {$ : $('.btn-upsert-modal-save')}
-                                , close : {$ : $('.btn-upsert-modal-close')}
+                                save        : {$ : $('#btn-news-modal-save')}
+                                , close     : {$ : $('#btn-news-modal-edit')}
+                                , addUrl    : {$ : $('#btn-news-modal-add-url')}
                             }
                         }
                     }
                 }
                 this.eventHandlers = {
-                    openTopicMenu               : this.fnOpenTopicMenu
+                    selectTimelineList          : this.fnSelectTimelineList
+                    , openTopicMenu             : this.fnOpenTopicMenu
                     , getTimelineTemplate       : this.fnGetTimelineTemplate
                     , showTopicDeleteSaveButton : this.fnShowTopicDeleteSaveButton
                     , deleteTopic               : this.fnDeleteTopic
                     , openNewsUpsertModal       : this.fnOpenNewsUpsertModal
                     , closeNewsUpsertModal      : this.fnCloseNewsUpsertModal
+                    , addUrl                    : this.fnAddUrl
+                    , resetNewsUpsertModal      : this.fnResetNewsUpsertModal
                     , saveNews                  : this.fnSaveNews
                 }
                 this.init();
             }
 
             init(){
-                this.fnSelectTimelineList();
+                this.eventHandlers.selectTimelineList();
                 this.addEventListeners();
             }
 
@@ -629,10 +155,12 @@
                 this.obj.document.$.on('click', this.obj.timelineRow.selector, this.eventHandlers.openNewsUpsertModal);
                 this.obj.modal.newsUpsert.btn.close.$.on('click', this.eventHandlers.closeNewsUpsertModal.bind(this));
                 this.obj.modal.newsUpsert.btn.save.$.on('click', this.eventHandlers.saveNews.bind(this));
+                this.obj.modal.newsUpsert.btn.addUrl.$.on('click', this.eventHandlers.addUrl.bind(this))
             }
 
             fnSelectTimelineList = () => {
                 $.post("/timeline/list", (html) => {
+                    this.obj.timelineBody.$.empty();
                     this.obj.timelineBody.$.prepend(html);
                 });
             }
@@ -751,6 +279,44 @@
 
             fnCloseNewsUpsertModal = () => {
                 this.obj.modal.newsUpsert.$.css('display', 'none');
+                this.eventHandlers.resetNewsUpsertModal();
+            }
+
+            fnAddUrl = () => {
+                let url = this.obj.modal.newsUpsert.txt.url.$.val();
+                $.ajax({
+                    url             : '/news/web-scraping'
+                    , method        : 'POST'
+                    , contentType   : 'application/json'
+                    , data          : JSON.stringify({url : url})
+                    , success       : (response) => {
+                        if(response.code == 'success'){
+                            let data = response.data;
+                            this.obj.modal.newsUpsert.newsList.$.prepend(data);
+                            //this.eventHandlers.selectTimelineList();
+                            //this.eventHandlers.closeNewsUpsertModal();
+                        }
+                    }
+                })
+
+            }
+
+            fnResetNewsUpsertModal = () => {
+                this.obj.modal.newsUpsert.hid.topicUid.$.val('');
+                this.obj.modal.newsUpsert.txt.topicName.$.val('');
+                this.obj.modal.newsUpsert.txt.title.$.val('');
+                this.obj.modal.newsUpsert.txt.date.$.val('');
+                this.obj.modal.newsUpsert.txt.memo.$.val('');
+                this.obj.modal.newsUpsert.rdo.importance.$.first().trigger('click');
+                
+                let $url = this.obj.modal.newsUpsert.$.find(this.obj.modal.newsUpsert.txt.url.selector);
+                $url.each(function(i){
+                    if(i > 2){
+                        $(this).remove();
+                    }else{
+                        $(this).val('');
+                    }
+                })
             }
 
             fnSaveNews = () => {
@@ -758,6 +324,7 @@
                 let title       = this.obj.modal.newsUpsert.txt.title.$.val();
                 let date        = this.obj.modal.newsUpsert.txt.date.$.val();
                 let memo        = this.obj.modal.newsUpsert.txt.memo.$.val();
+                let importance  = this.obj.modal.newsUpsert.rdo.importance.$.filter(':checked').val();
                 let $url        = this.obj.modal.newsUpsert.$.find(this.obj.modal.newsUpsert.txt.url.selector);
                 let urlArray    = new Array();
 
@@ -773,11 +340,12 @@
                 })
 
                 let params = {
-                    topic_uid   : topicUid
-                    , title     : title
-                    , date      : date
-                    , memo      : memo
-                    , url_array : urlArray
+                    topic_uid       : topicUid
+                    , title         : title
+                    , date          : date
+                    , memo          : memo
+                    , importance    : importance
+                    , url_array     : urlArray
                 }
 
                 $.ajax({
@@ -787,7 +355,8 @@
                     , data          : JSON.stringify(params)
                     , success       : (response) => {
                         if(response.resultCode == 'success'){
-                            
+                            this.eventHandlers.selectTimelineList();
+                            this.eventHandlers.closeNewsUpsertModal();
                         }
                     }
                 })
@@ -797,6 +366,11 @@
         }
         const timeline = new Timeline();
     </script>
+
+    <div class="footer">
+        © 2025 Geekive (Geekive Newsclip). All rights reserved.<br>
+        Copyrights of the clipped articles and content belong to their respective newspapers.
+    </div>
 </body>
 
 </html>

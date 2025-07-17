@@ -22,7 +22,7 @@ INSERT INTO TOPIC (
 ) VALUES (
     :topic_uid
     , :topic_name
-    , :registraion_date
+    , :registration_date
     , :registration_user
     , 'N'
 );

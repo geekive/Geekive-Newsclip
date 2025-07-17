@@ -4,7 +4,6 @@
             <div class="topic-item p-cc">
                 <span class="topic-name-area">{{ timeline.TOPIC_NAME }}</span>
                 <input type="text" class="transparent-underline-input hide" placeholder="토픽 입력">
-
                 <svg class="btn-topic-delete-save hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" data-topic-uid="{{ timeline.TOPIC_UID }}">
                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -13,10 +12,101 @@
             <div class="timeline-row" data-topic-uid="{{ timeline.TOPIC_UID }}" data-topic-name="{{ timeline.TOPIC_NAME }}">
                 <div class="timeline-line"></div>
                 <div class="cards-container">
+                    {% for date in timeline.DATE_LIST %}
+                    <div class="date-slot" data-date="{{ date.DATE }}">
+                        {% for news in date.NEWS_LIST %}
+                        <div class="news-card alt{{ news.IMPORTANCE }}">{{ news.TITLE }}<span class="news-date">{{ news.DATE }}</span></div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     {% endfor %}
+
+    <!-- 빈 공간을 채운다 :: s -->
+    {% for i in range(8 - timeline_list|length) %}
+    <div class="timeline-row-container">
+        <div class="topic-item p-cc empty"></div>
+        <div class="timeline-row">
+            <div class="timeline-line"></div>
+            <div class="cards-container"></div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- 빈 공간을 채운다 :: e -->
+
+    <script>
+        $(function(){
+            let dateArray = [];
+            $('.date-slot').each(function(){
+                dateArray.push($(this).data('date'));
+            })
+            dateArray = [...new Set(dateArray)];
+  
+            for(let date of dateArray) {
+                let $dateSlot = $('.date-slot[data-date="' + date + '"]');
+
+                let maxWidth = 0;
+                $dateSlot.each(function(){
+                    let width = $(this).outerWidth();
+                    console.log(width);
+                    if(width > maxWidth){
+                        maxWidth = width;
+                    }
+                })
+
+                $dateSlot.each(function(){
+                    $(this).width(maxWidth);
+                })
+            }
+        })
+$(function () {
+  const $dragArea = $('.cards-container');     // 마우스 이벤트 감지 영역
+  const $scrollTarget = $('body');             // 스크롤 적용 대상
+
+  let isDown = false;
+  let isDragging = false;
+  let startX;
+  let scrollLeft;
+
+  $dragArea.on('mousedown', function (e) {
+    isDown = true;
+    isDragging = false;
+    startX = e.pageX;
+    scrollLeft = $scrollTarget.scrollLeft();
+    $dragArea.addClass('grab');     // 👉 grab 클래스 추가
+    e.preventDefault();
+  });
+
+  $(document).on('mousemove', function (e) {
+    if (!isDown) return;
+
+    const x = e.pageX;
+    const walk = (x - startX) * 1.5;
+
+    if (Math.abs(x - startX) > 5) {
+      isDragging = true;
+    }
+
+    $scrollTarget.scrollLeft(scrollLeft - walk);
+  });
+
+  $(document).on('mouseup', function () {
+    isDown = false;
+    $dragArea.removeClass('grab');  // 👉 grab 클래스 제거
+  });
+
+  $dragArea.on('click', function (e) {
+    if (isDragging) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+  });
+});
+
+    </script>
 {% else %}  <!-- timeline template -->
     <div class="timeline-row-container">
         <div class="topic-item p-cc">

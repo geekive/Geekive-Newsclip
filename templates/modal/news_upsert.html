@@ -1,0 +1,74 @@
+<!-- 모달 -->
+<div id="news-upsert-modal-overlay" class="news-upsert-modal-overlay" tabindex="-1">
+    <div class="upsert-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <!-- 왼쪽 -->
+        <div class="modal-left">
+            <label for="txt-topic-name">토픽</label>
+            <input id="txt-upsert-modal-topic-name" type="text" class="modal-input" disabled />
+
+            <label for="txt-upsert-modal-title">
+                제목&nbsp;<span>(필수)</span>
+            </label>
+            <input id="txt-upsert-modal-title" type="text" class="modal-input" placeholder="최대 10글자" maxlength="10" />
+
+            <label for="txt-upsert-modal-date">
+                날짜&nbsp;<span>(필수)</span>
+            </label>
+            <input id="txt-upsert-modal-date" type="date" class="modal-input" />
+
+            <label for="txt-upsert-modal-memo">메모</label>
+            <textarea id="txt-upsert-modal-memo" class="modal-textarea" placeholder="메모 입력"></textarea>
+
+            <!-- 중요도 버튼 그룹 -->
+            <label>중요도</label>
+            <div class="importance-button-group">
+                <input type="radio" id="importance1" name="rdo-upsert-modal-importance" value="1" checked/>
+                <label for="importance1" class="importance-btn">1</label>
+
+                <input type="radio" id="importance2" name="rdo-upsert-modal-importance" value="2" />
+                <label for="importance2" class="importance-btn">2</label>
+
+                <input type="radio" id="importance3" name="rdo-upsert-modal-importance" value="3" />
+                <label for="importance3" class="importance-btn">3</label>
+
+                <input type="radio" id="importance4" name="rdo-upsert-modal-importance" value="4" />
+                <label for="importance4" class="importance-btn">4</label>
+
+                <input type="radio" id="importance5" name="rdo-upsert-modal-importance" value="5" />
+                <label for="importance5" class="importance-btn">5</label>
+            </div>
+
+            <div class="left-btn-wrapper">
+                <button class="btn-upsert-modal-save">저장</button>
+                <button class="btn-upsert-modal-close">닫기</button>
+            </div>
+        </div>
+
+        <!-- 세로 구분선 -->
+        <div class="modal-divider"></div>
+
+        <!-- 오른쪽 -->
+        <div class="modal-right">
+            <label>관련 URL</label>
+            <button id="btn-upsert-modal-add-url" type="button" class="btn-upsert-modal-add-url">
+                + URL 추가
+            </button>
+            <div id="upsert-modal-url-container">
+                <div class="url-field">
+                    <input type="text" class="txt-upsert-modal-url modal-input" placeholder="URL 입력" />
+                </div>
+                <div class="url-field">
+                    <input type="text" class="txt-upsert-modal-url modal-input" placeholder="URL 입력" />
+                </div>
+                <div class="url-field">
+                    <input type="text" class="txt-upsert-modal-url modal-input" placeholder="URL 입력" />
+                </div>
+            </div>
+            <div class="right-btn-wrapper">
+                <button class="btn-upsert-modal-save">저장</button>
+                <button class="btn-upsert-modal-close">닫기</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hid-upsert-modal-topic-uid" />
+</div>
