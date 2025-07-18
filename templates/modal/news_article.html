@@ -1,0 +1,33 @@
+{% if article_list is defined %}
+    {% for article in article_list %}
+        <div class="article-item">
+            <input type="checkbox" class="chk-news-modal-article">
+            <div class="thumbnail" style="background-image:url('{{ article.image_url }}');" onclick="window.open('{{ article.url }}', '_blank')"></div>
+            <div class="content" onclick="window.open('{{ article.url }}', '_blank')">
+                <div class="title">{{ article.title }}</div>
+                <div class="summary">{{ article.description }}</div>
+            </div>
+            <input type="hidden" class="article-uid"    value="{{ article.article_uid }}">
+            <input type="hidden" class="url"            value="{{ article.url }}">
+            <input type="hidden" class="publisher"      value="{{ article.publisher }}">
+            <input type="hidden" class="title"          value="{{ article.title }}">
+            <input type="hidden" class="image-url"      value="{{ article.image_url }}">
+            <input type="hidden" class="description"    value="{{ article.description }}">
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="article-item">
+        <input type="checkbox" class="chk-news-modal-article">
+        <div class="thumbnail" style="background-image:url('{{ og.image_url }}');" onclick="window.open('{{ og.url }}', '_blank')"></div>
+        <div class="content" onclick="window.open('{{ og.url }}', '_blank')">
+            <div class="title">{{ og.title }}</div>
+            <div class="summary">{{ og.description }}</div>
+        </div>
+        <input type="hidden" class="article-uid"    value="">
+        <input type="hidden" class="url"            value="{{ og.url }}">
+        <input type="hidden" class="publisher"      value="{{ og.publisher }}">
+        <input type="hidden" class="title"          value="{{ og.title }}">
+        <input type="hidden" class="image-url"      value="{{ og.image_url }}">
+        <input type="hidden" class="description"    value="{{ og.description }}">
+    </div>
+{% endif %}

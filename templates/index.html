@@ -9,7 +9,7 @@
     <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}"></script>
 </head>
 <body>
-    {% include 'modal/news_view.html' %}
+    {% include 'modal/news.html' %}
 
     <!-- header / search :: s -->
     <div class="header p-cb">
@@ -78,6 +78,12 @@
         <!-- timeline body :: e -->
     </div>
     <script>
+        const MODE = {
+            INSERT: 'I',
+            UPDATE: 'U',
+            DELETE: 'D',
+        };
+
         class Timeline{
             constructor(){
                 this.obj = {
@@ -87,6 +93,7 @@
                     , timelineRow           : {selector : '.timeline-row'}
                     , topicMenu             : {$ : $('#topic-menu')}
                     , topicNameArea         : {selector : '.topic-name-area'}
+                    , newsCard              : {selector : '.news-card'}
                     , txt : {
                         topicName   : {selector : '.txt-topic-name'}
                     }
@@ -99,10 +106,11 @@
                         , topicDeleteSave   : {selector : '.btn-topic-delete-save'}
                     }
                     , modal : {
-                        newsUpsert : {
-                            $               : $('#news-modal-overlay')
-                            , urlContainer  : {$ : $('#upsert-modal-url-container')}
-                            , newsList      : {$ : $('#news-modal-news-list')}
+                        news : {
+                            $                   : $('#news-modal-overlay')
+                            , articleWrapper    : {$ : $('#news-modal-article-wrapper')}
+                            , articleItem       : {selector : '.article-item'}
+                            , modalComment      : {$ : $('#modal-comment, #modal-divider-middle-right')}
                             , txt : {
                                 topicName   : {$ : $('#txt-news-modal-topic-name')}
                                 , title     : {$ : $('#txt-news-modal-title')}
@@ -111,15 +119,26 @@
                                 , url       : {$ : $('#txt-news-modal-url')}
                             }
                             , hid : {
-                                topicUid : {$ : $('#hid-news-modal-topic-uid')}
+                                topicUid        : {$ : $('#hid-news-modal-topic-uid')}
+                                , newsUid       : {$ : $('#hid-news-modal-news-uid')}
+                                , articleUid    : {selector : 'input[type="hidden"].article-uid'}
+                                , url           : {selector : 'input[type="hidden"].url'}
+                                , publisher     : {selector : 'input[type="hidden"].publisher'}
+                                , title         : {selector : 'input[type="hidden"].title'}
+                                , imageUrl      : {selector : 'input[type="hidden"].image-url'}
+                                , description   : {selector : 'input[type="hidden"].description'}
                             }
                             , rdo : {
                                 importance : {$ : $('input[name="rdo-news-modal-importance"]')}
                             }
+                            , chk : {selector : '.chk-news-modal-article'}
                             , btn : {
-                                save        : {$ : $('#btn-news-modal-save')}
-                                , close     : {$ : $('#btn-news-modal-edit')}
-                                , addUrl    : {$ : $('#btn-news-modal-add-url')}
+                                save            : {$ : $('#btn-news-modal-save')}
+                                , edit          : {$ : $('#btn-news-modal-edit')}
+                                , delete        : {$ : $('#btn-news-modal-delete')}
+                                , close         : {$ : $('#btn-news-modal-close')}
+                                , addArticle    : {$ : $('#btn-news-modal-add-article')}
+                                , deleteArticle : {$ : $('#btn-news-modal-delete-article')}
                             }
                         }
                     }
@@ -130,11 +149,13 @@
                     , getTimelineTemplate       : this.fnGetTimelineTemplate
                     , showTopicDeleteSaveButton : this.fnShowTopicDeleteSaveButton
                     , deleteTopic               : this.fnDeleteTopic
-                    , openNewsUpsertModal       : this.fnOpenNewsUpsertModal
-                    , closeNewsUpsertModal      : this.fnCloseNewsUpsertModal
-                    , addUrl                    : this.fnAddUrl
-                    , resetNewsUpsertModal      : this.fnResetNewsUpsertModal
+                    , openNewsModal             : this.fnOpenNewsModal
+                    , closeNewsModal            : this.fnCloseNewsModal
+                    , addArticle                : this.fnAddArticle
+                    , deleteArticle             : this.fnDeleteArticle
+                    , resetNewsModal            : this.fnResetNewsModal
                     , saveNews                  : this.fnSaveNews
+                    , deleteNews                : this.fnDeleteNews
                 }
                 this.init();
             }
@@ -151,11 +172,17 @@
                 this.obj.btn.topicMenu.$.on('click', this.eventHandlers.openTopicMenu.bind(this));
                 this.obj.btn.topicNew.$.on('click', this.eventHandlers.getTimelineTemplate.bind(this));
                 this.obj.btn.topicDelete.$.on('click', this.eventHandlers.showTopicDeleteSaveButton.bind(this));
+
                 this.obj.document.$.on('click', this.obj.btn.topicDeleteSave.selector, this.eventHandlers.deleteTopic);
-                this.obj.document.$.on('click', this.obj.timelineRow.selector, this.eventHandlers.openNewsUpsertModal);
-                this.obj.modal.newsUpsert.btn.close.$.on('click', this.eventHandlers.closeNewsUpsertModal.bind(this));
-                this.obj.modal.newsUpsert.btn.save.$.on('click', this.eventHandlers.saveNews.bind(this));
-                this.obj.modal.newsUpsert.btn.addUrl.$.on('click', this.eventHandlers.addUrl.bind(this))
+                this.obj.document.$.on('click', this.obj.timelineRow.selector, (e) => this.eventHandlers.openNewsModal(e, MODE.INSERT));
+                this.obj.document.$.on('click', this.obj.newsCard.selector, (e) => this.eventHandlers.openNewsModal(e, MODE.UPDATE));
+                
+                this.obj.modal.news.btn.close.$.on('click', this.eventHandlers.closeNewsModal.bind(this));
+                this.obj.modal.news.btn.save.$.on('click', this.eventHandlers.saveNews.bind(this, MODE.INSERT));
+                this.obj.modal.news.btn.edit.$.on('click', this.eventHandlers.saveNews.bind(this, MODE.UPDATE));
+                this.obj.modal.news.btn.addArticle.$.on('click', this.eventHandlers.addArticle.bind(this));
+                this.obj.modal.news.btn.deleteArticle.$.on('click', this.eventHandlers.deleteArticle.bind(this));
+                this.obj.modal.news.btn.delete.$.on('click', this.eventHandlers.deleteNews.bind(this));
             }
 
             fnSelectTimelineList = () => {
@@ -263,70 +290,85 @@
             /* topic :: e */
 
             /* timeline :: s */
-            fnOpenNewsUpsertModal = (e) => {
-                let $this       = $(e.currentTarget);
-                let topicUid    = $this.data('topic-uid');
-                let topicName   = $this.data('topic-name');
-                
-                if(!topicUid.trim()){
-                    return
-                }
+            fnOpenNewsModal = (e, mode) => {
+                let $this = $(e.currentTarget);
+                if(mode == MODE.INSERT){
+                    let topicUid    = $this.data('topic-uid');
+                    let topicName   = $this.data('topic-name');
+                    
+                    if(!topicUid.trim()){
+                        return
+                    }
 
-                this.obj.modal.newsUpsert.$.css('display', 'flex');
-                this.obj.modal.newsUpsert.hid.topicUid.$.val(topicUid);
-                this.obj.modal.newsUpsert.txt.topicName.$.val(topicName);
-            }
+                    this.obj.modal.news.hid.topicUid.$.val(topicUid);
+                    this.obj.modal.news.txt.topicName.$.val(topicName);
 
-            fnCloseNewsUpsertModal = () => {
-                this.obj.modal.newsUpsert.$.css('display', 'none');
-                this.eventHandlers.resetNewsUpsertModal();
-            }
+                    this.obj.modal.news.btn.save.$.show();
+                    this.obj.modal.news.btn.edit.$.hide();
+                    this.obj.modal.news.btn.delete.$.hide();
+                    this.obj.modal.news.modalComment.$.hide();
+                    this.obj.modal.news.$.css('display', 'flex');
+                }else if(mode == MODE.UPDATE){
+                    e.stopPropagation();
 
-            fnAddUrl = () => {
-                let url = this.obj.modal.newsUpsert.txt.url.$.val();
-                $.ajax({
-                    url             : '/news/web-scraping'
-                    , method        : 'POST'
-                    , contentType   : 'application/json'
-                    , data          : JSON.stringify({url : url})
-                    , success       : (response) => {
-                        if(response.code == 'success'){
-                            let data = response.data;
-                            this.obj.modal.newsUpsert.newsList.$.prepend(data);
-                            //this.eventHandlers.selectTimelineList();
-                            //this.eventHandlers.closeNewsUpsertModal();
+                    this.obj.modal.news.btn.save.$.hide();
+                    this.obj.modal.news.btn.edit.$.show();
+                    this.obj.modal.news.btn.delete.$.show();
+                    this.obj.modal.news.modalComment.$.show();
+                    
+                    $.ajax({
+                        url             : '/news/detail'
+                        , method        : 'POST'
+                        , contentType   : 'application/json'
+                        , data          : JSON.stringify({news_uid : $this.data('news-uid')})
+                        , success       : (response) => {
+                            if(response.resultCode == 'success'){
+                                // 필드에 데이터 입력
+                                let news = response.data;
+                                this.obj.modal.news.hid.newsUid.$.val(news.news_uid);
+                                this.obj.modal.news.txt.topicName.$.val(news.topic_name);
+                                this.obj.modal.news.txt.title.$.val(news.title);
+                                this.obj.modal.news.txt.date.$.val(news.date);
+                                this.obj.modal.news.txt.memo.$.val(news.memo);
+                                this.obj.modal.news.rdo.importance.$.filter(function(){
+                                    return $(this).val() === news.importance;
+                                }).first().click();
+                                this.obj.modal.news.articleWrapper.$.html(news.article_list_html);
+
+                                // 모달 오픈
+                                this.obj.modal.news.$.css('display', 'flex');
+                            }
                         }
-                    }
-                })
-
+                    })
+                }
             }
 
-            fnResetNewsUpsertModal = () => {
-                this.obj.modal.newsUpsert.hid.topicUid.$.val('');
-                this.obj.modal.newsUpsert.txt.topicName.$.val('');
-                this.obj.modal.newsUpsert.txt.title.$.val('');
-                this.obj.modal.newsUpsert.txt.date.$.val('');
-                this.obj.modal.newsUpsert.txt.memo.$.val('');
-                this.obj.modal.newsUpsert.rdo.importance.$.first().trigger('click');
-                
-                let $url = this.obj.modal.newsUpsert.$.find(this.obj.modal.newsUpsert.txt.url.selector);
-                $url.each(function(i){
-                    if(i > 2){
-                        $(this).remove();
-                    }else{
-                        $(this).val('');
-                    }
-                })
+            fnCloseNewsModal = () => {
+                this.obj.modal.news.$.css('display', 'none');
+                this.eventHandlers.resetNewsModal();
             }
 
-            fnSaveNews = () => {
-                let topicUid    = this.obj.modal.newsUpsert.hid.topicUid.$.val();
-                let title       = this.obj.modal.newsUpsert.txt.title.$.val();
-                let date        = this.obj.modal.newsUpsert.txt.date.$.val();
-                let memo        = this.obj.modal.newsUpsert.txt.memo.$.val();
-                let importance  = this.obj.modal.newsUpsert.rdo.importance.$.filter(':checked').val();
-                let $url        = this.obj.modal.newsUpsert.$.find(this.obj.modal.newsUpsert.txt.url.selector);
-                let urlArray    = new Array();
+            fnResetNewsModal = () => {
+                this.obj.modal.news.hid.topicUid.$.val('');
+                this.obj.modal.news.hid.newsUid.$.val('');
+                this.obj.modal.news.txt.topicName.$.val('');
+                this.obj.modal.news.txt.title.$.val('');
+                this.obj.modal.news.txt.date.$.val('');
+                this.obj.modal.news.txt.memo.$.val('');
+                this.obj.modal.news.rdo.importance.$.first().trigger('click');
+                this.obj.modal.news.txt.url.$.val('');
+                this.obj.modal.news.$.find(this.obj.modal.news.articleItem.selector).remove();
+            }
+
+            fnSaveNews = (mode) => {
+                let topicUid        = this.obj.modal.news.hid.topicUid.$.val();
+                let newsUid         = this.obj.modal.news.hid.newsUid.$.val();
+                let title           = this.obj.modal.news.txt.title.$.val();
+                let date            = this.obj.modal.news.txt.date.$.val();
+                let memo            = this.obj.modal.news.txt.memo.$.val();
+                let importance      = this.obj.modal.news.rdo.importance.$.filter(':checked').val();
+                let $url            = this.obj.modal.news.$.find(this.obj.modal.news.txt.url.selector);
+                let articleArray    = new Array();
 
                 if(!title.trim()){
                     alert('제목을 입력하세요.'); return
@@ -335,31 +377,71 @@
                     alert('날짜를 선택하세요.'); return
                 }
 
-                $url.each(function(){
-                    urlArray.push($(this).val().trim());
+                let $articleItem = $(this.obj.modal.news.articleItem.selector);
+                $articleItem.each((i, el) => {
+                    let data = {
+                        article_uid     : $(el).find(this.obj.modal.news.hid.articleUid.selector).val()
+                        , url           : $(el).find(this.obj.modal.news.hid.url.selector).val()
+                        , publisher     : $(el).find(this.obj.modal.news.hid.publisher.selector).val()
+                        , title         : $(el).find(this.obj.modal.news.hid.title.selector).val()
+                        , image_url     : $(el).find(this.obj.modal.news.hid.imageUrl.selector).val()
+                        , description   : $(el).find(this.obj.modal.news.hid.description.selector).val()
+                    }
+                    articleArray.push(data);
                 })
 
                 let params = {
                     topic_uid       : topicUid
+                    , news_uid      : newsUid
                     , title         : title
                     , date          : date
                     , memo          : memo
                     , importance    : importance
-                    , url_array     : urlArray
+                    , article_array : articleArray
                 }
 
                 $.ajax({
-                    url             : '/news/save'
+                    url             : mode == MODE.INSERT ? '/news/save' : '/news/edit'
                     , method        : 'POST'
                     , contentType   : 'application/json'
                     , data          : JSON.stringify(params)
                     , success       : (response) => {
                         if(response.resultCode == 'success'){
                             this.eventHandlers.selectTimelineList();
-                            this.eventHandlers.closeNewsUpsertModal();
+                            this.eventHandlers.closeNewsModal();
                         }
                     }
                 })
+            }
+
+            /* 기사를 등록 한다 */
+            fnAddArticle = () => {
+                let url = this.obj.modal.news.txt.url.$.val();
+                $.ajax({
+                    url             : '/news/article'
+                    , method        : 'POST'
+                    , contentType   : 'application/json'
+                    , data          : JSON.stringify({url : url})
+                    , success       : (response) => {
+                        if(response.code == 'success'){
+                            let data = response.data;
+                            this.obj.modal.news.articleWrapper.$.prepend(data);
+                            this.obj.modal.news.txt.url.$.val('');
+                        }
+                    }
+                })
+            }
+
+            /* 기사를 삭제 한다 */
+            fnDeleteArticle = () => {
+                let $chk = $(this.obj.modal.news.chk.selector).filter(':checked');
+                $chk.each(function(){
+                    $(this).parent().remove();
+                })
+            }
+
+            fnDeleteNews = () => {
+                confirm('뉴스를 삭제하시겠습니까?');
             }
             /* timeline :: e */
             

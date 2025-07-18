@@ -21,7 +21,7 @@
 
 .news-modal-overlay .view-modal {
     background: white;
-    width: 1500px;
+    width: fit-content;
     max-width: 100%;
     max-height: 76vh; /* 최대 높이 제한 */
     min-height: 700px;
@@ -37,14 +37,14 @@
 
 /* 3단 영역 */
 .modal-middle,
-.modal-right {
+.modal-comment {
     /* 높이 맞추기 위해 flex-grow 1 + 제한 */
     overflow-y: auto;
 }
 
 .news-modal-overlay .view-modal .modal-left,
 .news-modal-overlay .view-modal .modal-middle,
-.news-modal-overlay .view-modal .modal-right {
+.news-modal-overlay .view-modal .modal-comment {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -54,20 +54,24 @@
 /* 왼쪽: 고정 너비 320px */
 .news-modal-overlay .view-modal .modal-left {
     flex: 0 0 320px;
+    min-width: 320px;
 }
 
 /* 중간(기사 목록): 2배 */
 .news-modal-overlay .view-modal .modal-middle {
     flex: 2;
+    min-width: 693.63px;
+    max-width: 693.63px;
 }
 
 /* 오른쪽(댓글창): 1.2배, flex column, 댓글 목록과 입력폼 분리 */
-.news-modal-overlay .view-modal .modal-right {
+.news-modal-overlay .view-modal .modal-comment {
     flex: 1.2;
     border-left: 1px solid #ccc;
     padding-left: 24px;
     display: flex;
     flex-direction: column;
+    min-width: 436.38px;
 }
 
 /* 댓글 목록은 flex-grow:1 + 스크롤 */
@@ -122,6 +126,12 @@
     box-sizing: border-box;
     resize: none;
     color: #333;
+}
+
+.news-modal-overlay .view-modal input[type="text"][readonly],
+.news-modal-overlay .view-modal input[type="date"][readonly],
+.news-modal-overlay .view-modal textarea[readonly] {
+    background-color: #eeeeee;
 }
 
 /* textarea 높이 */
@@ -202,7 +212,7 @@
 
 .url-input-group button {
     align-self: flex-end;
-    background-color: #2c3e50;
+    
     color: white;
     border: none;
     border-radius: 6px;
@@ -215,8 +225,16 @@
     height: 38px;
 }
 
+.url-input-group .btn-news-modal-add-url{
+    background-color: #2c3e50;
+}
+
+.url-input-group .btn-news-modal-open-check{
+    background-color: #e74c3c;
+}
+
 /* 기사 리스트 */
-.news-list {
+.news-modal-article-wrapper {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -226,9 +244,8 @@
 }
 
 /* 각 기사 아이템 */
-.news-item {
+.article-item {
     display: flex;
-    gap: 16px;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 12px;
@@ -236,30 +253,39 @@
     background: #fafafa;
 }
 
+.article-item input[type="checkbox"]{
+    accent-color: #2c3e50;
+    width: 15px;
+}
+
 /* 썸네일 */
-.news-item .thumbnail {
+.article-item .thumbnail {
     width: 140px;
     height: 100px;
     background-size: cover;
     background-position: center;
     border-radius: 6px;
     flex-shrink: 0;
+    margin-left: 16px;
+    cursor: pointer;
 }
 
 /* 제목 및 요약 */
-.news-item .content {
+.article-item .content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding-left: 16px;
+    cursor: pointer;
 }
 
-.news-item .content .title {
+.article-item .content .title {
     font-weight: 700;
     font-size: 13px;
     margin-bottom: 6px;
 }
 
-.news-item .content .summary {
+.article-item .content .summary {
     font-size: 13px;
     color: #555;
     overflow: hidden;
@@ -275,7 +301,8 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    justify-content: flex-start;
+    justify-content: flex-end;
+    height: 24%;
 }
 
 .button-group button {
@@ -414,7 +441,7 @@
 
   .news-modal-overlay .view-modal .modal-left,
   .news-modal-overlay .view-modal .modal-middle,
-  .news-modal-overlay .view-modal .modal-right {
+  .news-modal-overlay .view-modal .modal-comment {
     width: 100%;
     max-height: none;
     overflow: visible;
@@ -425,7 +452,7 @@
     display: none;
   }
 
-  .news-modal-overlay .view-modal .modal-right {
+  .news-modal-overlay .view-modal .modal-comment {
     border-left: none;
     border-top: 1px solid #ccc;
     padding-left: 0;
@@ -450,7 +477,7 @@
         <!-- 왼쪽 -->
         <div class="modal-left">
             <label for="txt-news-modal-topic-name">토픽</label>
-            <input id="txt-news-modal-topic-name" type="text"/>
+            <input id="txt-news-modal-topic-name" readonly type="text"/>
 
             <label for="txt-news-modal-title">제목</label>
             <input id="txt-news-modal-title" type="text" placeholder="최대 10글자" maxlength="10"/>
@@ -481,10 +508,10 @@
             </div>
 
             <div class="button-group">
-                <button class="btn-news-modal-save" id="btn-news-modal-save" type="button">저장</button>
-                <button class="btn-news-modal-edit" id="btn-news-modal-edit" type="button">수정</button>
-                <button class="btn-news-modal-delete" type="button">삭제</button>
-                <button class="btn-news-modal-close" type="button" id="closeModalBtn">닫기</button>
+                <button class="btn-news-modal-save"     id="btn-news-modal-save"    type="button">저장</button>
+                <button class="btn-news-modal-edit"     id="btn-news-modal-edit"    type="button">수정</button>
+                <button class="btn-news-modal-delete"   id="btn-news-modal-delete"  type="button">삭제</button>
+                <button class="btn-news-modal-close"    id="btn-news-modal-close"   type="button" id="closeModalBtn">닫기</button>
             </div>
         </div>
 
@@ -493,79 +520,20 @@
 
         <!-- 중간 (기사 목록) -->
         <div class="modal-middle">
-            <label>관련 기사 목록</label>
+            <label>관련 기사</label>
             <div class="url-input-group">
                 <input id="txt-news-modal-url" type="text" placeholder="URL 입력"/>
-                <button type="button" id="btn-news-modal-add-url">등록</button>
-                <button type="button" id="btn-news-modal-open-check">선택</button>
+                <button type="button" id="btn-news-modal-add-article" class="btn-news-modal-add-url">등록</button>
+                <button type="button" id="btn-news-modal-delete-article" class="btn-news-modal-open-check">삭제</button>
             </div>
-            <div id="news-modal-news-list" class="news-list" aria-label="관련 기사 리스트">
-                <div class="news-item">
-                    <input type="checkbox">
-                    <div class="thumbnail" style="background-image:url('https://ojsfile.ohmynews.com/CRI_T_IMG/2025/0717/A0003149480_T.jpg');"></div>
-                    <div class="content">
-                        <div class="title">하루 311㎜ 비 쏟아진 광주... 하천 범람 우려에 주민 대피, 지하철 운행 차질 등 피해 속출</div>
-                        <div class="summary">[기사 보강 : 17일 오후 6시 50분]  광주광역시 도심에 17일 하루 300㎜를 웃도는 기록적인 폭우가 쏟아지면서 피해가 속출하고 있다.  기상청 전망치를 훌쩍 뛰어넘는 큰 비로 인해 광주 도심을 흐르는 하천 곳곳이 범람 위기 상태에 놓여 일부 지역에선 주민 대피 명령이 내려졌다.  또한 도심 도로와 외곽 고속도로 일부...</div>
-                    </div>
-                </div>
-
-                <div class="news-item">
-                    <div class="thumbnail" style="background-image:url('https://via.placeholder.com/140x100?text=Thumb1');"></div>
-                    <div class="content">
-                        <div class="title">첫 번째 기사 제목</div>
-                        <div class="summary">이것은 첫 번째 기사에 대한 요약 내용입니다. 중요한 정보를 포함합니다.</div>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="thumbnail" style="background-image:url('https://via.placeholder.com/140x100?text=Thumb2');"></div>
-                    <div class="content">
-                        <div class="title">두 번째 기사 제목</div>
-                        <div class="summary">두 번째 기사의 요약이며, 중요한 키포인트를 보여줍니다.</div>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="thumbnail" style="background-image:url('https://via.placeholder.com/140x100?text=Thumb3');"></div>
-                    <div class="content">
-                        <div class="title">세 번째 기사 제목</div>
-                        <div class="summary">세 번째 기사에 대한 간략한 설명입니다.</div>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="thumbnail" style="background-image:url('https://via.placeholder.com/140x100?text=Thumb4');"></div>
-                    <div class="content">
-                        <div class="title">네 번째 기사 제목</div>
-                        <div class="summary">네 번째 기사에 대한 요약입니다.</div>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="thumbnail" style="background-image:url('https://via.placeholder.com/140x100?text=Thumb5');"></div>
-                    <div class="content">
-                        <div class="title">다섯 번째 기사 제목</div>
-                        <div class="summary">다섯 번째 기사 요약 내용입니다.</div>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="thumbnail" style="background-image:url('https://via.placeholder.com/140x100?text=Thumb6');"></div>
-                    <div class="content">
-                        <div class="title">여섯 번째 기사 제목</div>
-                        <div class="summary">여섯 번째 기사에 대한 간략한 설명입니다.</div>
-                    </div>
-                </div>
-                <div class="news-item">
-                    <div class="thumbnail" style="background-image:url('https://via.placeholder.com/140x100?text=Thumb7');"></div>
-                    <div class="content">
-                        <div class="title">일곱 번째 기사 제목</div>
-                        <div class="summary">일곱 번째 기사에 대한 요약입니다.</div>
-                    </div>
-                </div>
-            </div>
+            <div id="news-modal-article-wrapper" class="news-modal-article-wrapper" aria-label="관련 기사 리스트"></div>
         </div>
 
         <!-- 구분선 (중간 - 오른쪽) -->
-        <div class="modal-divider-middle-right"></div>
+        <div id="modal-divider-middle-right" class="modal-divider-middle-right"></div>
 
         <!-- 오른쪽 (댓글창) -->
-        <div class="modal-right">
+        <div id="modal-comment" class="modal-comment">
             <label>댓글</label>
             <div class="comment-section" aria-label="댓글 목록">
                 <div class="comment">
@@ -597,6 +565,7 @@
         </div>
     </div>
     <input type="hidden" id="hid-news-modal-topic-uid" />
+    <input type="hidden" id="hid-news-modal-news-uid" />
 </div>
 
 <script>

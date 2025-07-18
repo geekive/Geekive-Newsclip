@@ -15,7 +15,7 @@
                     {% for date in timeline.DATE_LIST %}
                     <div class="date-slot" data-date="{{ date.DATE }}">
                         {% for news in date.NEWS_LIST %}
-                        <div class="news-card alt{{ news.IMPORTANCE }}">{{ news.TITLE }}<span class="news-date">{{ news.DATE }}</span></div>
+                        <div class="news-card alt{{ news.IMPORTANCE }}" data-news-uid="{{ news.NEWS_UID }}">{{ news.TITLE }}<span class="news-date">{{ news.DATE }}</span></div>
                         {% endfor %}
                     </div>
                     {% endfor %}
@@ -50,7 +50,6 @@
                 let maxWidth = 0;
                 $dateSlot.each(function(){
                     let width = $(this).outerWidth();
-                    console.log(width);
                     if(width > maxWidth){
                         maxWidth = width;
                     }

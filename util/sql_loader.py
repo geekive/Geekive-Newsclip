@@ -1,5 +1,8 @@
 from sqlalchemy import text
 
+# -------------------------------------------------------------------
+# SQL 쿼리 파일을 읽고, 이름별로 쿼리를 분리하여 딕셔너리로 반환
+# -------------------------------------------------------------------
 def load_queries(file_path):
     queries = {}
     with open(file_path, 'r', encoding='utf-8') as f:

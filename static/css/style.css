@@ -308,7 +308,7 @@ html {
 .timeline-container #timeline-body .timeline-row-container .timeline-row .cards-container .date-slot .news-card {
     position: relative;
     width: auto;
-    max-width: 100px;
+    max-width: 111px;
     padding: 6px 8px;
     background: #2c3e50;
     color: #fafafa;
