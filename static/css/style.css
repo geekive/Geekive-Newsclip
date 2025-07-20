@@ -63,6 +63,10 @@ html {
     margin-right: 20px;
 }
 
+.header .sign-wrapper .signout{
+    margin-right: 20px;
+}
+
 .header .sign-wrapper .spliter{
     border-left: 1px solid #fafafa;
     background-color: #fafafa;
@@ -77,7 +81,7 @@ html {
     margin-right: 20px;
 }
 
-.header .sign-wrapper .signin:hover,.signup:hover,.search-toggle:hover{
+.header .sign-wrapper .signin:hover,.signup:hover,.signout:hover,.search-toggle:hover{
     font-weight: 600;
     cursor: pointer;
 }
@@ -815,3 +819,154 @@ html {
         max-width: 303px;
     }
 }
+
+
+/* 회원가입 창 :: s */
+/* 모달 오버레이 */
+.signup-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+/* 모달 본체 */
+.signup-modal-overlay .signup-modal {
+    background: white;
+    width: 480px;
+    border-radius: 10px;
+    padding: 30px 30px 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+/* 모달 제목 */
+.signup-modal-overlay .signup-modal h2 {
+    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+/* 입력 필드 그룹 */
+.signup-modal-overlay .signup-modal .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.signup-modal-overlay .signup-modal .form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.signup-modal-overlay .signup-modal .form-group input {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.signup-modal-overlay .signup-modal .form-group input:disabled {
+    background-color: #f0f0f0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.signup-modal-overlay .signup-modal .form-group input:read-only {
+    background-color: #f0f0f0;
+    color: black;
+    cursor: not-allowed;
+}
+
+/* 입력+버튼 조합 */
+.signup-modal-overlay .signup-modal .form-group .input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.signup-modal-overlay .signup-modal .form-group .input-group input {
+    flex: 1;
+}
+
+.signup-modal-overlay .signup-modal .form-group .input-group button {
+    width: 110px;
+    flex-shrink: 0;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.signup-modal-overlay .signup-modal .form-group .input-group button:hover {
+    background-color: #1a2733;
+}
+
+.signup-modal-overlay .signup-modal .form-group .input-group button:disabled {
+    background-color: #777;
+    cursor: not-allowed;
+}
+
+.signup-modal-overlay .signup-modal .form-group .input-group button:disabled:hover {
+    background-color: #777;
+}
+
+/* 메시지 출력 */
+.signup-modal-overlay .signup-modal .signup-modal-message {
+    height: 20px;
+    font-size: 13px;
+    color: red;
+    text-align: center;
+    margin-top: 6px;
+    visibility: hidden;
+}
+
+.signup-modal-overlay .signup-modal .signup-modal-message.visible {
+    visibility: visible;
+}
+
+.signup-modal-overlay .signup-modal .signup-modal-message.green {
+    color: green;
+}
+
+/* 하단 버튼 */
+.signup-modal-overlay .signup-modal .btn-signup-modal-save,
+.signup-modal-overlay .signup-modal .btn-signup-modal-close {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+.signup-modal-overlay .signup-modal .btn-signup-modal-save {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.signup-modal-overlay .signup-modal .btn-signup-modal-save:disabled {
+    background-color: #777;
+    color: white;
+    cursor: not-allowed;
+}
+
+.signup-modal-overlay .signup-modal .btn-signup-modal-close {
+    background-color: #777;
+    color: white;
+}
+/* 회원가입 창 :: e */

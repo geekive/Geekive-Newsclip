@@ -30,3 +30,14 @@ INSERT INTO USER(
 	, :registration_date
 	, :user_uid
 );
+
+-- name: selectUser
+SELECT
+	USER_UID		AS user_uid
+	, NICKNAME		AS nickname
+	, EMAIL			AS email
+	, PASSWORD		AS password
+FROM
+	USER
+WHERE
+	EMAIL = :email

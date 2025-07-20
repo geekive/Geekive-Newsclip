@@ -1,7 +1,7 @@
 import sys
 import os
 import requests
-from flask import Flask, render_template, request, jsonify, url_for
+from flask import Flask, render_template, request, jsonify, url_for, session, redirect
 
 # 경로 설정
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -10,11 +10,12 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from model.timeline_model import select_timeline_list
 from model.news_model import get_news_list, select_news_detail, select_article_list, insert_news, update_news
 from model.topic_model import insert_topic, delete_topic
-from model.sign_model import check_nickname, check_email, send_code_mail, insert_user
+from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
 
 from util.util import get_og_information
 
 app = Flask(__name__)
+app.secret_key = "12345"
 
 # ------------------------------
 # 홈 화면
@@ -179,9 +180,37 @@ def signup_save():
     insert_user(request.get_json())
     return jsonify({
         'resultCode': 'success',
-        'resultMessage': '회원가입을 축하합니다!\n로그인창으로 이동합니다.',
+        'resultMessage': '회원가입을 축하합니다!\n로그인 창으로 이동합니다.',
         'data': ''
     })
+
+# ------------------------------
+# 로그인 / 로그아웃
+# ------------------------------
+@app.route("/signin", methods=['POST'])
+def signin():
+    user = check_user(request.get_json())
+
+    if not user:
+        return jsonify({
+            'resultCode'    : 'fail',
+            'resultMessage' : '이메일 또는 비밀번호가 틀렸습니다.',
+            'data'          : ''
+        })
+    
+    session['user_uid'] = user.get('user_uid')
+    session['nickname'] = user.get('nickname')
+
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '',
+        'data': ''
+    })
+
+@app.route("/signout", methods=['POST'])
+def signout():
+    session.clear()
+    return '', 204
 
 # ------------------------------
 # 앱 실행

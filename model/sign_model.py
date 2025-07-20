@@ -79,3 +79,28 @@ def insert_user(data):
         raise
     finally:
         session.close()
+
+# -------------------------------------------------------------------
+# 로그인
+# -------------------------------------------------------------------
+def check_user(data):
+    session = get_session()
+    try:
+        param   = {"email": data.get('email', '').strip()}
+        user    = session.execute(sql_map["selectUser"], param)
+        user    = user.mappings().first()
+
+        if not user:
+            return None
+
+        user = dict(user)
+        stored_hash = user.get('password')
+
+        if bcrypt.checkpw(data.get('password').encode(), user.get('password')):
+            print('### 로그인 성공')
+            return user
+        else:
+            print('### 로그인 실패')
+            return None
+    finally:
+        session.close()

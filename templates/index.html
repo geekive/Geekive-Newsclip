@@ -12,6 +12,7 @@
     <script src="{{ url_for('static', filename='js/timeline.js') }}"></script>    
 </head>
 <body>
+    {% include 'modal/signin.html' %}
     {% include 'modal/signup.html' %}
     {% include 'modal/news.html' %}
     
@@ -22,12 +23,18 @@
             Newsclip
         </div>
         <div class="sign-wrapper p-cc">
-            <div class="signin">
-                로그인
-            </div>
-            <div id="signup" class="signup">
-                회원가입
-            </div>
+            {% if not session %}
+                <div id="signin" class="signin">
+                    로그인
+                </div>
+                <div id="signup" class="signup">
+                    회원가입
+                </div>
+            {% else %}
+                <div id="signout" class="signout">
+                    로그아웃
+                </div>
+            {% endif %}
             <div class="spliter"></div>
             <div class="search-toggle">
                 조건검색 열기
@@ -87,7 +94,8 @@
         Copyrights of the clipped articles and content belong to their respective newspapers.
     </div>
     <script>
-        const signup      = new Signup();
+        const signin    = new Signin();
+        const signup    = new Signup();
         const timeline  = new Timeline();
     </script>
 </body>

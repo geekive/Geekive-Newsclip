@@ -270,3 +270,109 @@ class Signup {
         this.obj.modal.pwd.passwordCheck.$.prop('disabled', true);
     }
 }
+
+class Signin {
+    constructor() {
+        this.obj = {
+            btn : {
+                signin      : {$ : $('#signin')}
+                , signout   : {$ : $('#signout')}
+            }
+            , modal : {
+                $ : $('#signin-modal-overlay')
+                , message : {$ : $('#signin-modal-message')}
+                , txt  : {
+                    email : {$ : $('#txt-signin-modal-email')} 
+                }
+                , btn : {
+                    signin      : {$ : $('#btn-signin-modal-signin')}
+                    , close     : {$ : $('#btn-signin-modal-close')}
+                }
+                , pwd : {
+                    password        : {$ : $('#pwd-signin-modal-password')}
+                }
+            }
+        }
+        this.eventHandlers = {
+            openSigninModal     : this.fnOpenSigninModal
+            , closeSigninModal  : this.fnCloseSigninModal
+            , showMessage       : this.fnShowMessage
+            , clearMessage      : this.fnClearMessage
+            , signin            : this.fnSignin
+            , signout           : this.fnSignout
+        }
+        this.init()
+    }
+
+    init(){
+        this.addEventListeners();
+    }
+
+    addEventListeners() {
+        this.obj.btn.signin.$.on('click', this.eventHandlers.openSigninModal.bind(this));
+        this.obj.btn.signout.$.on('click', this.eventHandlers.signout.bind(this));
+        this.obj.modal.btn.close.$.on('click', this.eventHandlers.closeSigninModal.bind(this));
+        this.obj.modal.btn.signin.$.on('click', this.eventHandlers.signin.bind(this));
+    }
+
+    fnOpenSigninModal = () => {
+        this.obj.modal.$.css('display', 'flex');
+    }
+
+    fnCloseSigninModal = () => {
+        this.obj.modal.$.css('display', 'none');
+        this.eventHandlers.reset();
+    }
+
+    fnShowMessage = (message, isGreen) => {
+        if(isGreen){
+            this.obj.modal.message.$.addClass('green');    
+        }else{
+            this.obj.modal.message.$.removeClass('green');
+        }
+        this.obj.modal.message.$.text(message).addClass('visible');
+    }
+
+    fnClearMessage = () => {
+        this.obj.modal.message.$.text('').addClass('visible');
+    }
+
+    fnSignin = () => {
+        let email       = this.obj.modal.txt.email.$.val();
+        let password    = this.obj.modal.pwd.password.$.val();
+
+        if(!email.trim()){
+            this.eventHandlers.showMessage('이메일을 입력하세요.');
+            return
+        }
+        if(!password.trim()){
+            this.eventHandlers.showMessage('비밀번호를 입력하세요.');
+            return
+        }
+
+        let params = {
+            email       : email
+            , password  : password
+        }
+
+        $.ajax({
+            url: '/signin'
+            , method: 'POST'
+            , contentType: 'application/json'
+            , data: JSON.stringify(params)
+            , success: (response) => {
+                if(response.resultCode == 'success') {
+                    location.reload();
+                }else{
+                    this.eventHandlers.showMessage(response.resultMessage);
+                }
+            }
+        })
+    }
+
+    fnSignout = () => {
+        $.post('/signout').always(() => {
+            window.location.href = '/';
+        });
+    }
+}
