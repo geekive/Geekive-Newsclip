@@ -267,6 +267,7 @@ html {
     align-items: center;
     position: relative;
     cursor: pointer;
+    min-width: 1740px;
 }
 
 .timeline-container #timeline-body .timeline-row-container .timeline-row:hover {
@@ -376,11 +377,17 @@ html {
     position: sticky;
     left: 0;
     z-index: 4;
+    line-height: 1.8;
 }
 /* footer :: e */
 
-/* modal :: s 
-.news-upsert-modal-overlay {
+/* ───────────────
+   모달 전체 구조 기반 CSS 리팩토링
+   .상위 .하위 형식으로 구조화
+──────────────── */
+
+/* === 오버레이 === */
+.news-modal-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -388,203 +395,423 @@ html {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.6);
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     z-index: 1000;
-    overflow: auto;
-    padding: 20px;
+    overflow-y: auto;
+    padding: 40px 20px;
     box-sizing: border-box;
 }
 
-.news-upsert-modal-overlay .upsert-modal {
+.news-modal-overlay.active {
+    display: flex;
+}
+
+/* === 모달 본체 === */
+.news-modal-overlay .view-modal {
     background: white;
-    width: 960px;
+    min-width: fit-content;
     max-width: 100%;
-    height: 645px;
-    max-height: 90vh;
+    max-height: 76vh;
+    min-height: 700px;
     padding: 24px;
     border-radius: 10px;
     display: flex;
     gap: 0;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    min-height: 645px;
     box-sizing: border-box;
     flex-wrap: nowrap;
+    overflow: hidden;
 }
 
-.news-upsert-modal-overlay .upsert-modal .modal-left,
-.modal-right {
+/* === 모달 3단 구조 === */
+.news-modal-overlay .view-modal .modal-left,
+.news-modal-overlay .view-modal .modal-middle,
+.news-modal-overlay .view-modal .modal-comment {
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     padding: 0 24px;
-    box-sizing: border-box;
 }
 
-.news-upsert-modal-overlay .upsert-modal .modal-left {
-    flex: 1;
+.news-modal-overlay .view-modal .modal-left {
+    flex: 0 0 320px;
+    min-width: 320px;
 }
 
-.news-upsert-modal-overlay .upsert-modal .modal-right {
-    flex: 1.7;
-    overflow-y: auto;
-    max-height: 84vh;
-    padding-right: 8px;
+.news-modal-overlay .view-modal .modal-middle {
+    flex: 2;
+    min-width: 693.63px;
+    max-width: 693.63px;
+    border-left: 1px solid #ccc;
 }
 
-.news-upsert-modal-overlay .upsert-modal .modal-divider {
-    width: 1px;
-    background: black;
-    margin: 0;
+.news-modal-overlay .view-modal .modal-comment {
+    flex: 1.2;
+    border-left: 1px solid #ccc;
+    padding-left: 24px;
+    display: flex;
+    flex-direction: column;
+    min-width: 436.38px;
+    max-width: 436.38px;
 }
 
-.news-upsert-modal-overlay .upsert-modal label {
+/* === 라벨 & 입력 === */
+.news-modal-overlay .view-modal label {
     font-weight: 600;
-    margin-top: 16px;
+    margin-top: 13px;
+    margin-bottom: 5px;
     font-size: 14px;
 }
 
-.news-upsert-modal-overlay .upsert-modal .modal-left span{
-    color: red;
-}
-
-.news-upsert-modal-overlay .upsert-modal .modal-input,
-.modal-textarea {
-    margin-top: 6px;
-    padding: 10px;
+.news-modal-overlay .view-modal input[type="text"],
+.news-modal-overlay .view-modal input[type="date"],
+.news-modal-overlay .view-modal textarea {
     border: 1px solid #ccc;
+    padding: 10px;
     border-radius: 6px;
     font-size: 14px;
     width: 100%;
     box-sizing: border-box;
-}
-
-.news-upsert-modal-overlay .upsert-modal .modal-textarea {
-    height: 120px;
     resize: none;
-}
-
-
-.importance-button-group {
-  display: flex;
-  gap: 4px;
-}
-
-.importance-button-group label {
-    margin-top: 8px !important;
-}
-
-.importance-button-group input[type="radio"] {
-  display: none;
-}
-
-.importance-btn {
-  flex: 1 1 0;
-  padding: 8px 0;
-  background-color: #eee;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 14px;
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-
-
-
-.news-upsert-modal-overlay .upsert-modal .btn-upsert-modal-add-url {
-    margin-top: 16px;
-    padding: 12px;
-    background-color: #eee;
     color: #333;
-    border: 1px solid #999;
-    border-radius: 6px;
+}
+
+.news-modal-overlay .view-modal input[readonly],
+.news-modal-overlay .view-modal textarea[readonly] {
+    background-color: #eee;
+}
+
+.news-modal-overlay .view-modal textarea {
+    height: 120px;
+}
+
+/* 중요도 버튼 그룹 */
+.news-modal-overlay .view-modal .modal-left .importance-button-group {
+    display: flex;
+    gap: 4px;
+}
+
+.news-modal-overlay .view-modal .modal-left .importance-button-group .importance-btn {
+    flex: 1 1 0;
+    padding: 8px 0;
+    border-radius: 4px;
+    font-weight: 600;
     font-size: 14px;
-    cursor: pointer;
-    width: 100%;
+    text-align: center;
+    user-select: none;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    color: #666;
+    margin-top: 0px;
 }
 
-.news-upsert-modal-overlay .upsert-modal .url-field {
-    margin-bottom: 10px;
-}
-
-.news-upsert-modal-overlay .upsert-modal .btn-upsert-modal-close {
-    margin-top: 12px;
-    padding: 10px 14px;
-    background: #e74c3c;
+.news-modal-overlay .view-modal .modal-left .importance-button-group .importance-btn.selected {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
     color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    width: 100%;
 }
 
-.news-upsert-modal-overlay .upsert-modal .btn-upsert-modal-save {
-    margin-top: 12px;
-    padding: 10px 14px;
-    background: #2c3e50;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    width: 100%;
-}
-
-.news-upsert-modal-overlay .upsert-modal .right-btn-wrapper {
+.news-modal-overlay .view-modal .modal-left .importance-button-group input[type="radio"] {
     display: none;
 }
 
-@media (max-width: 1000px) {
-    .news-upsert-modal-overlay .upsert-modal {
-        flex-wrap: wrap;
-        height: auto;
-        max-height: 90vh;
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance1:hover+label[for="importance1"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance1:checked+label[for="importance1"] {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    color: white;
+}
+
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance2:hover+label[for="importance2"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance2:checked+label[for="importance2"] {
+    background-color: darkgreen;
+    border-color: darkgreen;
+    color: white;
+}
+
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance3:hover+label[for="importance3"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance3:checked+label[for="importance3"] {
+    background-color: darkblue;
+    border-color: darkblue;
+    color: white;
+}
+
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance4:hover+label[for="importance4"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance4:checked+label[for="importance4"] {
+    background-color: darkmagenta;
+    border-color: darkmagenta;
+    color: white;
+}
+
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance5:hover+label[for="importance5"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance5:checked+label[for="importance5"] {
+    background-color: darkred;
+    border-color: darkred;
+    color: white;
+}
+
+
+/* === URL 등록 영역 === */
+.news-modal-overlay .view-modal .modal-middle .url-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.news-modal-overlay .view-modal .modal-middle .url-input-group button {
+    align-self: flex-end;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+    width: 92.77px;
+    height: 38px;
+}
+
+.news-modal-overlay .view-modal .modal-middle .url-input-group .btn-news-modal-add-url {
+    background-color: #2c3e50;
+}
+
+.news-modal-overlay .view-modal .modal-middle .url-input-group .btn-news-modal-open-check {
+    background-color: #e74c3c;
+}
+
+/* === 기사 리스트 === */
+.news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 160px;
+    max-height: 552px;
+    overflow-y: auto;
+    margin-top: 16px;
+}
+
+.news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: default;
+    background: #fafafa;
+}
+
+.news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item input[type="checkbox"] {
+    accent-color: #2c3e50;
+    width: 15px;
+}
+
+.news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item .thumbnail {
+    width: 140px;
+    height: 100px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-left: 16px;
+    cursor: pointer;
+}
+
+.news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-left: 16px;
+    cursor: pointer;
+}
+
+.news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item .content .title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 6px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item .content .summary {
+    font-size: 13px;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* === 버튼 그룹 === */
+.news-modal-overlay .view-modal .modal-left .button-group {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: flex-end;
+    height: 24%;
+}
+
+.news-modal-overlay .view-modal .modal-left .button-group button {
+    width: 100%;
+    height: 40px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.news-modal-overlay .view-modal .modal-left .button-group .btn-news-modal-save,
+.news-modal-overlay .view-modal .modal-left .button-group .btn-news-modal-edit {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.news-modal-overlay .view-modal .modal-left .button-group .btn-news-modal-delete {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.news-modal-overlay .view-modal .modal-left .button-group .btn-news-modal-close {
+    background-color: #777;
+    color: white;
+}
+
+/* === 댓글 영역 === */
+.news-modal-overlay .view-modal .modal-comment .comment-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-section .comment {
+    background: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-section .comment .comment-author {
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #2c3e50;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-section .comment .comment-text {
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-input-area {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-input-area textarea {
+    resize: vertical;
+    min-height: 60px;
+    max-height: 120px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-input-area button {
+    align-self: flex-end;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-input-area button:hover {
+    background-color: #1a2733;
+}
+
+/* === 반응형 === */
+@media (max-width: 1429px) {
+    .news-modal-overlay {
+        align-items: flex-start;
         overflow-y: auto;
+        padding: 32px 0;
     }
 
-    .news-upsert-modal-overlay .upsert-modal .modal-left,
-    .modal-right {
-        flex: 1 1 100%;
+    .news-modal-overlay .view-modal {
+        flex-direction: column;
+        max-height: 90vh;
+        overflow-y: auto;
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .news-modal-overlay .view-modal .modal-left,
+    .news-modal-overlay .view-modal .modal-middle,
+    .news-modal-overlay .view-modal .modal-comment {
+        width: 100%;
         max-height: none;
         overflow: visible;
     }
 
-    .news-upsert-modal-overlay .upsert-modal .modal-left {
-        padding: 0px 16px;
-        padding-top: 12px
-    }
-
-    .news-upsert-modal-overlay .upsert-modal .modal-right {
-        padding: 0px 16px;
-        padding-top: 0px
-    }
-
-    .news-upsert-modal-overlay .upsert-modal .modal-divider {
+    .news-modal-overlay .view-modal .modal-divider-left-middle,
+    .news-modal-overlay .view-modal .modal-divider-middle-right {
         display: none;
     }
 
-    .news-upsert-modal-overlay .upsert-modal .modal-right {
-        overflow-y: visible;
-        max-height: none;
-        margin-top: 0px;
+    .news-modal-overlay .view-modal .modal-middle {
+        border-left: none;
+        border-top: 1px solid #ccc;
+        flex: 2;
+        min-width: 0px;
+        max-width: 100%;
+        padding-top: 16px;
     }
 
-    .news-upsert-modal-overlay .upsert-modal .modal-right label:first-of-type {
-        margin-top: 16px;
+    .news-modal-overlay .view-modal .modal-comment {
+        border-left: none;
+        border-top: 1px solid #ccc;
+        padding-top: 16px;
+        max-width: 100%;
+        min-width: 100%;
     }
 
-    .news-upsert-modal-overlay .upsert-modal .left-btn-wrapper {
-        display: none;
+    .news-modal-overlay .view-modal .modal-left .button-group {
+        flex-direction: row;
+        gap: 8px;
+        justify-content: start;
     }
 
-    .news-upsert-modal-overlay .upsert-modal .right-btn-wrapper {
-        display: block;
+    .news-modal-overlay .view-modal .modal-left .button-group button {
+        width: 48%;
+    }
+
+    .news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item .content .title {
+        max-width: 303px;
+    }
+
+    .news-modal-overlay .view-modal .modal-middle .news-modal-article-wrapper .article-item .content .summary {
+        max-width: 303px;
     }
 }
-*/
-/* modal :: e */

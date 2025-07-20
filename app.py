@@ -10,6 +10,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from model.timeline_model import select_timeline_list
 from model.news_model import get_news_list, select_news_detail, select_article_list, insert_news, update_news
 from model.topic_model import insert_topic, delete_topic
+from model.sign_model import check_nickname, check_email, send_code_mail, insert_user
+
 from util.util import get_og_information
 
 app = Flask(__name__)
@@ -140,7 +142,50 @@ def web_scraping():
     return jsonify(og)
 
 # ------------------------------
+# 회원가입 관련
+# ------------------------------
+@app.route("/signup/check/nickname", methods=['POST'])
+def signup_check_nickname():
+    is_duplicate = check_nickname(request.get_json())
+
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '',
+        'data': is_duplicate
+    })
+
+@app.route("/signup/check/email", methods=['POST'])
+def signup_check_email():
+    is_duplicate = check_email(request.get_json())
+
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '',
+        'data': is_duplicate
+    })
+
+@app.route("/signup/code", methods=['POST'])
+def signup_code():
+    code = send_code_mail(request.get_json())
+
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '',
+        'data': code
+    })
+
+@app.route("/signup/save", methods=['POST'])
+def signup_save():
+    insert_user(request.get_json())
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '회원가입을 축하합니다!\n로그인창으로 이동합니다.',
+        'data': ''
+    })
+
+# ------------------------------
 # 앱 실행
 # ------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
+

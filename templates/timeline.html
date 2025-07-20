@@ -35,77 +35,7 @@
     </div>
     {% endfor %}
     <!-- 빈 공간을 채운다 :: e -->
-
-    <script>
-        $(function(){
-            let dateArray = [];
-            $('.date-slot').each(function(){
-                dateArray.push($(this).data('date'));
-            })
-            dateArray = [...new Set(dateArray)];
-  
-            for(let date of dateArray) {
-                let $dateSlot = $('.date-slot[data-date="' + date + '"]');
-
-                let maxWidth = 0;
-                $dateSlot.each(function(){
-                    let width = $(this).outerWidth();
-                    if(width > maxWidth){
-                        maxWidth = width;
-                    }
-                })
-
-                $dateSlot.each(function(){
-                    $(this).width(maxWidth);
-                })
-            }
-        })
-$(function () {
-  const $dragArea = $('.cards-container');     // 마우스 이벤트 감지 영역
-  const $scrollTarget = $('body');             // 스크롤 적용 대상
-
-  let isDown = false;
-  let isDragging = false;
-  let startX;
-  let scrollLeft;
-
-  $dragArea.on('mousedown', function (e) {
-    isDown = true;
-    isDragging = false;
-    startX = e.pageX;
-    scrollLeft = $scrollTarget.scrollLeft();
-    $dragArea.addClass('grab');     // 👉 grab 클래스 추가
-    e.preventDefault();
-  });
-
-  $(document).on('mousemove', function (e) {
-    if (!isDown) return;
-
-    const x = e.pageX;
-    const walk = (x - startX) * 1.5;
-
-    if (Math.abs(x - startX) > 5) {
-      isDragging = true;
-    }
-
-    $scrollTarget.scrollLeft(scrollLeft - walk);
-  });
-
-  $(document).on('mouseup', function () {
-    isDown = false;
-    $dragArea.removeClass('grab');  // 👉 grab 클래스 제거
-  });
-
-  $dragArea.on('click', function (e) {
-    if (isDragging) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      return false;
-    }
-  });
-});
-
-    </script>
+     
 {% else %}  <!-- timeline template -->
     <div class="timeline-row-container">
         <div class="topic-item p-cc">

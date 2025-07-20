@@ -1,6 +1,9 @@
 import uuid
 import requests
+import smtplib
 from bs4 import BeautifulSoup
+from config.config import Config
+from email.message import EmailMessage
 
 # -------------------------------------------------------------------
 # UID 생성 함수
@@ -44,3 +47,21 @@ def bind_array(query: str, name: str, values: list):
     bind = {f"{name}_{i}": v for i, v in enumerate(values)}
     query = query.replace(f"__{name.upper()}__", placeholder)
     return query, bind
+
+# -------------------------------------------------------------------
+# GMAIL 전송
+# -------------------------------------------------------------------
+def send_email(email: str, subject: str, content: str):
+    msg             = EmailMessage()
+    msg["Subject"]  = subject
+    msg["From"]     = Config.MAIL_USERNAME
+    msg["To"]       = email
+    msg.set_content(content)
+    msg.add_alternative(content, subtype="html")
+
+    with smtplib.SMTP(Config.MAIL_SERVER, Config.MAIL_PORT) as smtp:
+        if Config.MAIL_USE_TLS:
+            smtp.starttls()
+        smtp.login(Config.MAIL_USERNAME, Config.MAIL_PASSWORD)
+        smtp.send_message(msg)
+
