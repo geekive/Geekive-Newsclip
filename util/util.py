@@ -65,3 +65,4 @@ def send_email(email: str, subject: str, content: str):
         smtp.login(Config.MAIL_USERNAME, Config.MAIL_PASSWORD)
         smtp.send_message(msg)
 
+    

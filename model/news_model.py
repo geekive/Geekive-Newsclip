@@ -3,6 +3,7 @@ from util.sql_loader import load_queries
 from util.util import generate_uid, bind_array
 from datetime import datetime
 from sqlalchemy import text
+from flask import session as user_session
 import os
 
 # 쿼리 로딩
@@ -57,7 +58,7 @@ def insert_news(data):
             "memo": data.get('memo', '').strip(),
             "importance": data.get('importance', '').strip(),
             "registration_date": datetime.now(),
-            "registration_user": "system"
+            "registration_user": user_session.get('user_uid')
         }
         session.execute(sql_map["insertNews"], news_params)
 
@@ -72,7 +73,7 @@ def insert_news(data):
                 "image_url": article.get('image_url'),
                 "description": article.get('description'),
                 "registration_date": datetime.now(),
-                "registration_user": "system"
+                "registration_user": user_session.get('user_uid')
             }
             session.execute(sql_map["insertArticle"], article_param)
 

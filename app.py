@@ -11,11 +11,12 @@ from model.timeline_model import select_timeline_list
 from model.news_model import get_news_list, select_news_detail, select_article_list, insert_news, update_news
 from model.topic_model import insert_topic, delete_topic
 from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
-
+from model.interest_model import select_topic
+from config.config import Config
 from util.util import get_og_information
 
 app = Flask(__name__)
-app.secret_key = "12345"
+app.secret_key = Config.SECRET_KEY
 
 # ------------------------------
 # 홈 화면
@@ -207,10 +208,28 @@ def signin():
         'data': ''
     })
 
+@app.route("/signed", methods=['POST'])
+def signed():
+    signed = True if 'user_uid' in session else False
+    return jsonify({'signed': signed})
+
 @app.route("/signout", methods=['POST'])
 def signout():
     session.clear()
     return '', 204
+
+# ------------------------------
+# 관심 토픽 관련
+# ------------------------------
+@app.route("/interest/topic", methods=['POST'])
+def interest_topic():
+    topic = select_topic()
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '',
+        'data': topic
+    })
+
 
 # ------------------------------
 # 앱 실행

@@ -2,6 +2,7 @@ from db.connection import get_session
 from util.sql_loader import load_queries
 from util.util import generate_uid
 from datetime import datetime
+from flask import session as user_session
 import os
 
 # 쿼리 로딩
@@ -27,10 +28,10 @@ def insert_topic(topic_name):
     try:
         topic_uid = generate_uid("TPC")
         params = {
-            "topic_uid": topic_uid,
-            "topic_name": topic_name,
-            "registration_date": datetime.now(),
-            "registration_user": "system",
+            "topic_uid"             : topic_uid
+            , "topic_name"          : topic_name
+            , "registration_date"   : datetime.now()
+            , "registration_user"   : user_session.get('user_uid')
         }
         session.execute(sql_map["insertTopic"], params)
         session.commit()

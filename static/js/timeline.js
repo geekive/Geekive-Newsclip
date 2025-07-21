@@ -119,7 +119,12 @@ class Timeline {
         this.obj.topicMenu.$.toggle();
     }
 
-    fnGetTimelineTemplate = () => {
+    fnGetTimelineTemplate = async () => {
+        if(!await IS_SIGNED()){
+            alert('로그인이 필요한 기능입니다.');
+            return
+        }
+
         let isDisabled = this.obj.btn.topicNew.$.data('disabled');
         let isDeleteOpen = this.obj.btn.topicDelete.$.data('open');
         if (isDisabled) {
@@ -179,7 +184,12 @@ class Timeline {
         }
     }
 
-    fnShowTopicDeleteSaveButton = () => {
+    fnShowTopicDeleteSaveButton = async () => {
+        if(!await IS_SIGNED()){
+            alert('로그인이 필요한 기능입니다.');
+            return
+        }
+
         let isDisabled = this.obj.btn.topicNew.$.data('disabled');
         if (isDisabled) {
             alert('토픽 생성 행이 존재하여 삭제 기능이 제한됩니다.');
@@ -283,7 +293,7 @@ class Timeline {
         });
     }
 
-    fnOpenNewsModal = (e, mode) => {
+    fnOpenNewsModal = async (e, mode) => {
         let $this = $(e.currentTarget);
         if (mode == MODE.INSERT) {
             let topicUid = $this.data('topic-uid');
@@ -301,6 +311,12 @@ class Timeline {
             this.obj.modal.news.btn.delete.$.hide();
             this.obj.modal.news.modalComment.$.hide();
             this.obj.modal.news.$.css('display', 'flex');
+
+            if(!await IS_SIGNED()){
+                alert('뉴스 등록은 로그인이 필요한 기능입니다.');
+                this.eventHandlers.closeNewsModal();
+                return
+            }
         } else if (mode == MODE.UPDATE) {
             e.stopPropagation();
 

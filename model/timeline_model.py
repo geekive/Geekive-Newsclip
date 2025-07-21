@@ -2,6 +2,7 @@ from db.connection import get_session
 from util.sql_loader import load_queries
 from util.util import generate_uid
 from datetime import datetime
+from flask import session as user_session
 import os
 from collections import defaultdict
 
@@ -17,7 +18,10 @@ def select_timeline_list():
     session = get_session()
 
     # 주제 목록 조회
-    topic_result = session.execute(sql_map["selectTopicList"])
+    params = {
+        "user_uid" : user_session.get("user_uid")
+    }
+    topic_result = session.execute(sql_map["selectTopicList"], params)
     topic_list = topic_result.fetchall()
 
     # 날짜 목록 조회
@@ -44,7 +48,7 @@ def select_timeline_list():
     # 주제별로 날짜 그룹과 뉴스 리스트 매핑
     result_list = []
     for topic in topic_list:
-        topic_uid = topic["TOPIC_UID"]
+        topic_uid = topic["topic_uid"]
 
         date_grouped_news = []
         for date in date_list:
