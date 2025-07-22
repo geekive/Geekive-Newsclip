@@ -117,7 +117,7 @@
     .no-results {
       text-align: center;
       color: #666;
-      padding-top: 20px;
+      padding-top: 100px;
       width: 100%;
     }
 
@@ -210,26 +210,8 @@
     }
 
     $(document).ready(function () {
-      $('#btn-interest-modal-close').on('click', function () {
-        $('#interest-modal-overlay').hide();
-      });
 
-      $('#btn-interest-modal-save').on('click', function () {
-        const selected = $('input[name="interests"]:checked').map(function () {
-          return $(this).val();
-        }).get();
-
-        if (selected.length === 0) {
-          $('#interest-modal-message').text('하나 이상의 토픽을 선택해주세요.');
-          return;
-        }
-
-        $('#interest-modal-message').text('');
-        alert('선택된 관심 토픽: ' + selected.join(', '));
-        $('#interest-modal-overlay').hide();
-      });
-
-      $('#txt-interest-modal-search').on('input', renderInterests);
+      //$('#txt-interest-modal-search').on('input', renderInterests);
       $('#chk-show-selected').on('change', renderInterests);
     });
   </script>

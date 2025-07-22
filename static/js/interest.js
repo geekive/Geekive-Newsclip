@@ -25,17 +25,22 @@ class Interest {
             , clearMessage          : this.fnClearMessage
             , selectInterest        : this.fnSelectInterest
             , renderInterest        : this.fnRenderInterest
+            , getKoreanInitial      : this.fnGetKoreanInitial
         }
         this.init()
     }
 
-    init(){
+    async init(){
         this.addEventListeners();
+        this.obj.interest = await this.eventHandlers.selectInterest();
     }
 
     addEventListeners() {
         this.obj.btn.interest.$.on('click', this.eventHandlers.openInterestModal.bind(this));
         this.obj.modal.btn.close.$.on('click', this.eventHandlers.closeInterestModal.bind(this));
+        this.obj.modal.txt.search.$.on('input', () => {
+            this.eventHandlers.renderInterest(this.obj.modal.txt.search.$.val().trim());
+        })
     }
 
     fnOpenInterestModal = () => {
@@ -70,13 +75,17 @@ class Interest {
         return topicResponse.data
     }
 
-    fnRenderInterest = async () => {
-        this.obj.interest = await this.eventHandlers.selectInterest();
+    fnRenderInterest = (keyword) => {
+        let $interestListWrapper = this.obj.modal.interestListWrapper.$;
+        $interestListWrapper.empty();
 
-        let $search                 = this.obj.modal.txt.search.$;
-        let $interestListWrapper    = this.obj.modal.interestListWrapper.$;
-        
         let interestsCopy = [...this.obj.interest];
+        if(keyword){
+            let keywordInitial = this.eventHandlers.getKoreanInitial(keyword);
+            interestsCopy = interestsCopy.filter(interest => {
+                return interest.topic_name.includes(keyword) || this.eventHandlers.getKoreanInitial(interest.topic_name).includes(keywordInitial);
+            });
+        }
         interestsCopy.forEach(interest => {
             const id = `${interest.topic_uid}`;
             const $label = $(`
@@ -87,5 +96,24 @@ class Interest {
             `);
             $interestListWrapper.append($label);
         });
+        if(interestsCopy.length == 0){
+            $interestListWrapper.html('<div class="no-results">검색 결과 없음</div>');
+        }
+    }
+
+    fnGetKoreanInitial = (value) => {
+        const KOREAN_INITIALS = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ",
+                                "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+        let result = '';
+        for(let ch of value) {
+            const code = ch.charCodeAt(0);
+            if(code >= 0xAC00 && code <= 0xD7A3) {
+                const initialIndex = Math.floor((code - 0xAC00) / (21 * 28));
+                result += KOREAN_INITIALS[initialIndex];
+            }else{
+                result += ch;
+            }
+        }
+        return result;
     }
 }
