@@ -1,21 +1,38 @@
+-- name: selectRandomTopicList
+SELECT
+	TOPIC_UID       	AS topic_uid
+	, TOPIC_NAME    	AS topic_name
+	, FALSE				AS is_mine
+FROM 
+	TOPIC
+WHERE
+	FLAG_DELETED = 'N'
+ORDER BY 
+	RANDOM()
+LIMIT 8;
+
 -- name: selectTopicList
 SELECT
-    TOPIC_UID       AS topic_uid
-	, TOPIC_NAME    AS topic_name
+    T.TOPIC_UID       	AS topic_uid
+	, T.TOPIC_NAME    	AS topic_name
 	, CASE 
 		WHEN 
-            REGISTRATION_USER = 'USR-4a7ac19358e446ca8a389a36299b80ec'
+            T.REGISTRATION_USER = :user_uid
 		THEN 
             TRUE
 		ELSE 
             FALSE
-	END	            AS is_mine
+	END	            	AS is_mine
 FROM
-    TOPIC
+    TOPIC T
+	INNER JOIN INTEREST I
+	ON
+		I.TOPIC_UID 	= T.TOPIC_UID
+		AND I.USER_UID 	= :user_uid
 WHERE
-    FLAG_DELETED = 'N'
+    T.FLAG_DELETED = 'N'
 ORDER BY
-    REGISTRATION_DATE DESC;
+    T.REGISTRATION_DATE DESC;
 
 -- name: selectDateList
 SELECT

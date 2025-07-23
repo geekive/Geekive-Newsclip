@@ -18,10 +18,11 @@ def select_timeline_list():
     session = get_session()
 
     # 주제 목록 조회
-    params = {
-        "user_uid" : user_session.get("user_uid")
-    }
-    topic_result = session.execute(sql_map["selectTopicList"], params)
+    user_uid    = user_session.get("user_uid")
+    params      = {"user_uid": user_uid} if user_uid else {}
+
+    sql_key = "selectTopicList" if user_uid else "selectRandomTopicList"
+    topic_result = session.execute(sql_map[sql_key], params)
     topic_list = topic_result.fetchall()
 
     # 날짜 목록 조회

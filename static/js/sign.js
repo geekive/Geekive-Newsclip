@@ -6,29 +6,34 @@ class Signup {
             }
             , code : {value : ''}
             , modal : {
-                $ : $('#signup-modal-overlay')
-                , message : {$ : $('#signup-modal-message')}
-                , validation : {
-                    nickname        : {isClear : false}
-                    , email         : {isClear : false}
-                    , code          : {isClear : false}
-                    , password      : {isClear : false}
-                    , passwordCheck : {isClear : false}
+                signup : {
+                    $ : $('#signup-modal-overlay')
+                    , message : {$ : $('#signup-modal-message')}
+                    , validation : {
+                        nickname        : {isClear : false}
+                        , email         : {isClear : false}
+                        , code          : {isClear : false}
+                        , password      : {isClear : false}
+                        , passwordCheck : {isClear : false}
+                    }
+                    , txt  : {
+                        nickname    : {$ : $('#txt-signup-modal-nickname')}
+                        , email     : {$ : $('#txt-signup-modal-email')} 
+                        , code      : {$ : $('#txt-signup-modal-code')}
+                    }
+                    , btn : {
+                        sendCode    : {$ : $('#btn-send-code')}
+                        , checkCode : {$ : $('#btn-check-code')}
+                        , save      : {$ : $('#btn-signup-modal-save')}
+                        , close     : {$ : $('#btn-signup-modal-close')}
+                    }
+                    , pwd : {
+                        password        : {$ : $('#pwd-signup-modal-password')}
+                        , passwordCheck : {$ : $('#pwd-signup-modal-password-check')}
+                    }
                 }
-                , txt  : {
-                    nickname    : {$ : $('#txt-signup-modal-nickname')}
-                    , email     : {$ : $('#txt-signup-modal-email')} 
-                    , code      : {$ : $('#txt-signup-modal-code')}
-                }
-                , btn : {
-                    sendCode    : {$ : $('#btn-send-code')}
-                    , checkCode : {$ : $('#btn-check-code')}
-                    , save      : {$ : $('#btn-signup-modal-save')}
-                    , close     : {$ : $('#btn-signup-modal-close')}
-                }
-                , pwd : {
-                    password        : {$ : $('#pwd-signup-modal-password')}
-                    , passwordCheck : {$ : $('#pwd-signup-modal-password-check')}
+                , interest : {
+                    $ : $('#interest-modal-overlay')
                 }
             }
         }
@@ -54,43 +59,43 @@ class Signup {
 
     addEventListeners() {
         this.obj.btn.signup.$.on('click', this.eventHandlers.openSignupModal.bind(this));
-        this.obj.modal.btn.close.$.on('click', this.eventHandlers.closeSignupModal.bind(this));
-        this.obj.modal.txt.nickname.$.on('input', this.eventHandlers.checkValidation.bind(this));
-        this.obj.modal.txt.email.$.on('input', this.eventHandlers.checkValidation.bind(this));
-        this.obj.modal.pwd.password.$.on('input', this.eventHandlers.checkPassword.bind(this));
-        this.obj.modal.pwd.passwordCheck.$.on('input', this.eventHandlers.checkPassword.bind(this));
-        this.obj.modal.btn.sendCode.$.on('click', this.eventHandlers.sendCode.bind(this));
-        this.obj.modal.btn.checkCode.$.on('click', this.eventHandlers.checkCode.bind(this));
-        this.obj.modal.btn.save.$.on('click', this.eventHandlers.save.bind(this));
+        this.obj.modal.signup.btn.close.$.on('click', this.eventHandlers.closeSignupModal.bind(this));
+        this.obj.modal.signup.txt.nickname.$.on('input', this.eventHandlers.checkValidation.bind(this));
+        this.obj.modal.signup.txt.email.$.on('input', this.eventHandlers.checkValidation.bind(this));
+        this.obj.modal.signup.pwd.password.$.on('input', this.eventHandlers.checkPassword.bind(this));
+        this.obj.modal.signup.pwd.passwordCheck.$.on('input', this.eventHandlers.checkPassword.bind(this));
+        this.obj.modal.signup.btn.sendCode.$.on('click', this.eventHandlers.sendCode.bind(this));
+        this.obj.modal.signup.btn.checkCode.$.on('click', this.eventHandlers.checkCode.bind(this));
+        this.obj.modal.signup.btn.save.$.on('click', this.eventHandlers.save.bind(this));
     }
 
     fnOpenSignupModal = () => {
-        this.obj.modal.$.css('display', 'flex');
+        this.obj.modal.signup.$.css('display', 'flex');
     }
 
     fnCloseSignupModal = () => {
-        this.obj.modal.$.css('display', 'none');
+        this.obj.modal.signup.$.css('display', 'none');
         this.eventHandlers.reset();
     }
 
     fnShowMessage = (message, isGreen) => {
         if(isGreen){
-            this.obj.modal.message.$.addClass('green');    
+            this.obj.modal.signup.message.$.addClass('green');    
         }else{
-            this.obj.modal.message.$.removeClass('green');
+            this.obj.modal.signup.message.$.removeClass('green');
         }
-        this.obj.modal.message.$.text(message).addClass('visible');
+        this.obj.modal.signup.message.$.text(message).addClass('visible');
     }
 
     fnClearMessage = () => {
-        this.obj.modal.message.$.text('').addClass('visible');
+        this.obj.modal.signup.message.$.text('').addClass('visible');
     }
 
     fnCheckValidation = async () => {
         // 닉네임 검증
-        let nickname = this.obj.modal.txt.nickname.$.val();
+        let nickname = this.obj.modal.signup.txt.nickname.$.val();
         if(!nickname.trim()){
-            this.obj.modal.btn.sendCode.$.prop('disabled', true);
+            this.obj.modal.signup.btn.sendCode.$.prop('disabled', true);
             this.eventHandlers.setValidation.call(this, 'nickname', false);
             return
         }
@@ -105,7 +110,7 @@ class Signup {
         if(nicknameResponse.resultCode == 'success'){
             let isDuplicate = nicknameResponse.data;
             if(isDuplicate){
-                this.obj.modal.btn.sendCode.$.prop('disabled', true);
+                this.obj.modal.signup.btn.sendCode.$.prop('disabled', true);
                 this.eventHandlers.setValidation.call(this, 'nickname', false);
                 this.eventHandlers.showMessage('중복된 닉네임이 있습니다.');
                 return
@@ -116,9 +121,9 @@ class Signup {
         }
 
         // 이메일 중복 검증 
-        let email = this.obj.modal.txt.email.$.val();
+        let email = this.obj.modal.signup.txt.email.$.val();
         if(!email.trim()){
-            this.obj.modal.btn.sendCode.$.prop('disabled', true);
+            this.obj.modal.signup.btn.sendCode.$.prop('disabled', true);
             this.eventHandlers.setValidation.call(this, 'email', false);
             return
         }
@@ -133,7 +138,7 @@ class Signup {
         if(emailResponse.resultCode == 'success'){
             let isDuplicate = emailResponse.data;
             if(isDuplicate){
-                this.obj.modal.btn.sendCode.$.prop('disabled', true);
+                this.obj.modal.signup.btn.sendCode.$.prop('disabled', true);
                 this.eventHandlers.setValidation.call(this, 'email', false);
                 this.eventHandlers.showMessage('중복된 이메일이 있습니다.');
                 return
@@ -143,14 +148,14 @@ class Signup {
             }
         }
         
-        this.obj.modal.btn.sendCode.$.prop('disabled', false);
+        this.obj.modal.signup.btn.sendCode.$.prop('disabled', false);
     }
     
     fnCheckPassword = () => {
         // 비밀번호 검증
-        this.obj.modal.btn.save.$.prop('disabled', true);
+        this.obj.modal.signup.btn.save.$.prop('disabled', true);
 
-        let password = this.obj.modal.pwd.password.$.val();
+        let password = this.obj.modal.signup.pwd.password.$.val();
         if(!password.trim()){
             this.eventHandlers.setValidation.call(this, 'password', false);
             return
@@ -165,7 +170,7 @@ class Signup {
         }
 
         // 비밀번호 확인 검증
-        let passwordCheck = this.obj.modal.pwd.passwordCheck.$.val();
+        let passwordCheck = this.obj.modal.signup.pwd.passwordCheck.$.val();
         if(!passwordCheck.trim()){
             this.eventHandlers.setValidation.call(this, 'passwordCheck', false);
             return
@@ -177,26 +182,26 @@ class Signup {
         }else{
             this.eventHandlers.clearMessage();
             this.eventHandlers.setValidation.call(this, 'passwordCheck', true);
-            this.obj.modal.btn.save.$.prop('disabled', false);
+            this.obj.modal.signup.btn.save.$.prop('disabled', false);
         }
     }
 
     fnSetValidation = (key, value) => {
-        this.obj.modal.validation[key].isClear = value;
+        this.obj.modal.signup.validation[key].isClear = value;
     }
 
     fnSendCode = async () => {
-        let email = this.obj.modal.txt.email.$.val();
+        let email = this.obj.modal.signup.txt.email.$.val();
         if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             this.eventHandlers.showMessage('이메일 형식이 아닙니다.');
             return
         }
 
-        this.obj.modal.txt.nickname.$.prop('readonly', true);
-        this.obj.modal.txt.email.$.prop('readonly', true);
-        this.obj.modal.btn.sendCode.$.prop('disabled', true);
-        this.obj.modal.txt.code.$.prop('disabled', false);
-        this.obj.modal.btn.checkCode.$.prop('disabled', false);
+        this.obj.modal.signup.txt.nickname.$.prop('readonly', true);
+        this.obj.modal.signup.txt.email.$.prop('readonly', true);
+        this.obj.modal.signup.btn.sendCode.$.prop('disabled', true);
+        this.obj.modal.signup.txt.code.$.prop('disabled', false);
+        this.obj.modal.signup.btn.checkCode.$.prop('disabled', false);
         this.eventHandlers.showMessage('메일 확인 후 인증번호를 입력하세요.', true);
 
         let emailResponse = await $.ajax({
@@ -210,31 +215,31 @@ class Signup {
     }
 
     fnCheckCode = () => {
-        if(this.obj.modal.txt.code.$.val() == this.obj.code.value){
+        if(this.obj.modal.signup.txt.code.$.val() == this.obj.code.value){
             this.eventHandlers.setValidation.call(this, 'code', true);
             this.eventHandlers.clearMessage();
 
-            this.obj.modal.txt.code.$.prop('disabled', true);
-            this.obj.modal.btn.checkCode.$.prop('disabled', true);
-            this.obj.modal.pwd.password.$.prop('disabled', false);
-            this.obj.modal.pwd.passwordCheck.$.prop('disabled', false);
+            this.obj.modal.signup.txt.code.$.prop('disabled', true);
+            this.obj.modal.signup.btn.checkCode.$.prop('disabled', true);
+            this.obj.modal.signup.pwd.password.$.prop('disabled', false);
+            this.obj.modal.signup.pwd.passwordCheck.$.prop('disabled', false);
         }else{
             this.eventHandlers.showMessage('인증번호가 일치하지 않습니다.');
         }
     }
 
     fnSave = () => {
-        let nicknameClear       = this.obj.modal.validation.nickname.isClear;
-        let emailClear          = this.obj.modal.validation.email.isClear;
-        let codeClear           = this.obj.modal.validation.code.isClear;
-        let passwordClear       = this.obj.modal.validation.password.isClear;
-        let passwordCheckClear  = this.obj.modal.validation.passwordCheck.isClear;
+        let nicknameClear       = this.obj.modal.signup.validation.nickname.isClear;
+        let emailClear          = this.obj.modal.signup.validation.email.isClear;
+        let codeClear           = this.obj.modal.signup.validation.code.isClear;
+        let passwordClear       = this.obj.modal.signup.validation.password.isClear;
+        let passwordCheckClear  = this.obj.modal.signup.validation.passwordCheck.isClear;
         
         if(nicknameClear && emailClear && codeClear && passwordClear && passwordCheckClear){
             let params = {
-                nickname    : this.obj.modal.txt.nickname.$.val()
-                , email     : this.obj.modal.txt.email.$.val()
-                , password  : this.obj.modal.pwd.password.$.val()
+                nickname    : this.obj.modal.signup.txt.nickname.$.val()
+                , email     : this.obj.modal.signup.txt.email.$.val()
+                , password  : this.obj.modal.signup.pwd.password.$.val()
             }
             $.ajax({
                 url: '/signup/save'
@@ -246,6 +251,8 @@ class Signup {
                         alert(response.resultMessage);
                         this.eventHandlers.closeSignupModal();
                         this.eventHandlers.reset();
+
+                        interest.eventHandlers.openInterestModal(); // const interest  = new Interest();
                     }
                 }
             })
@@ -255,19 +262,19 @@ class Signup {
     }
 
     fnReset = () => {
-        this.obj.modal.txt.nickname.$.val('');
-        this.obj.modal.txt.nickname.$.prop('readonly', false);
+        this.obj.modal.signup.txt.nickname.$.val('');
+        this.obj.modal.signup.txt.nickname.$.prop('readonly', false);
 
-        this.obj.modal.txt.email.$.val('');
-        this.obj.modal.txt.email.$.prop('readonly', false);
-        this.obj.modal.btn.sendCode.$.prop('disabled', false);
+        this.obj.modal.signup.txt.email.$.val('');
+        this.obj.modal.signup.txt.email.$.prop('readonly', false);
+        this.obj.modal.signup.btn.sendCode.$.prop('disabled', false);
         
-        this.obj.modal.txt.code.$.val('');
+        this.obj.modal.signup.txt.code.$.val('');
         
-        this.obj.modal.pwd.password.$.val('');
-        this.obj.modal.pwd.password.$.prop('disabled', true);
-        this.obj.modal.pwd.passwordCheck.$.val('');
-        this.obj.modal.pwd.passwordCheck.$.prop('disabled', true);
+        this.obj.modal.signup.pwd.password.$.val('');
+        this.obj.modal.signup.pwd.password.$.prop('disabled', true);
+        this.obj.modal.signup.pwd.passwordCheck.$.val('');
+        this.obj.modal.signup.pwd.passwordCheck.$.prop('disabled', true);
     }
 }
 

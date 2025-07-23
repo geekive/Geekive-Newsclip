@@ -74,6 +74,7 @@ def insert_user(data):
         }
         session.execute(sql_map["insertUser"], user_params)
         session.commit()
+        return user_uid
     except Exception:
         session.rollback()
         raise

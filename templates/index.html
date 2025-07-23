@@ -102,10 +102,11 @@
         Copyrights of the clipped articles and content belong to their respective newspapers.
     </div>
     <script>
+        // 클래스마다 서로 의존성이 있어 아래와 같은 순서로 호출해야함.
+        const timeline  = new Timeline();
         const signin    = new Signin();
         const interest  = new Interest();
         const signup    = new Signup();
-        const timeline  = new Timeline();
     </script>
 </body>
 
