@@ -27,6 +27,17 @@ INSERT INTO TOPIC (
     , 'N'
 );
 
+-- name: insertNewTopicIntoInterest
+INSERT INTO INTEREST (
+    USER_UID
+    , TOPIC_UID
+    , "ORDER"
+) VALUES (
+    :user_uid
+    , :topic_uid
+    , 0
+);
+
 -- name: deleteTopic
 UPDATE TOPIC
 SET

@@ -32,7 +32,6 @@
             Newsclip
         </div>
         <div class="sign-wrapper p-cc">
-            <button id="interest">관심 토픽 선택 열기</button>
             {% if not session %}
                 <div id="signin" class="signin">
                     로그인
@@ -41,6 +40,9 @@
                     회원가입
                 </div>
             {% else %}
+                <div id="interest" class="interest">
+                    내 관심 토픽
+                </div>
                 <div id="signout" class="signout">
                     로그아웃
                 </div>

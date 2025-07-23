@@ -177,7 +177,7 @@ class Interest {
             , success: (response) => {
                 if(response.resultCode == 'success') {
                     alert(response.resultMessage);
-                    timeline.eventHandlers.selectTimelineList();
+                    timeline.eventHandlers.selectTimelineList();    // const timeline  = new Timeline();
                     this.eventHandlers.closeInterestModal();
                 }else{
                     this.eventHandlers.showMessage();

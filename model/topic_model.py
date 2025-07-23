@@ -6,16 +6,18 @@ from flask import session as user_session
 import os
 
 # 쿼리 로딩
-sql_path = os.path.join(os.path.dirname(__file__), "../db/query", "topic.sql")
-sql_map = load_queries(sql_path)
+topic_sql_path = os.path.join(os.path.dirname(__file__), "../db/query", "topic.sql")
+topic_sql_map = load_queries(topic_sql_path)
 
+interest_sql_path = os.path.join(os.path.dirname(__file__), "../db/query", "interest.sql")
+interest_sql_map = load_queries(interest_sql_path)
 
 # -------------------------------------------------------------------
 # 토픽 조회
 # -------------------------------------------------------------------
 def select_topic():
     session = get_session()
-    result = session.execute(sql_map["selectTopic"])
+    result = session.execute(topic_sql_map["selectTopic"])
     session.close()
     return result.fetchall()
 
@@ -26,14 +28,25 @@ def select_topic():
 def insert_topic(topic_name):
     session = get_session()
     try:
-        topic_uid = generate_uid("TPC")
-        params = {
+        user_uid    = user_session.get('user_uid')
+        topic_uid   = generate_uid("TPC")
+
+        # TOPIC 테이블에 데이터 저장
+        topic_params = {
             "topic_uid"             : topic_uid
             , "topic_name"          : topic_name
             , "registration_date"   : datetime.now()
-            , "registration_user"   : user_session.get('user_uid')
+            , "registration_user"   : user_uid
         }
-        session.execute(sql_map["insertTopic"], params)
+        session.execute(topic_sql_map["insertTopic"], topic_params)
+
+        # INTEREST 테이블에 최상단 순서로 데이터 저장 후 재정렬
+        interest_param = {
+            "user_uid"      : user_uid
+            , "topic_uid"   : topic_uid
+        }
+        session.execute(topic_sql_map["insertNewTopicIntoInterest"], interest_param)
+        session.execute(interest_sql_map["cleanInterestOrder"], interest_param)
         session.commit()
     except Exception as e:
         session.rollback()
@@ -49,7 +62,7 @@ def insert_topic(topic_name):
 def delete_topic(topic_uid):
     session = get_session()
     try:
-        session.execute(sql_map["deleteTopic"], {"topic_uid": topic_uid})
+        session.execute(topic_sql_map["deleteTopic"], {"topic_uid": topic_uid})
         session.commit()
     except Exception as e:
         session.rollback()

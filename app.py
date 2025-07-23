@@ -11,7 +11,7 @@ from model.timeline_model import select_timeline_list
 from model.news_model import get_news_list, select_news_detail, select_article_list, insert_news, update_news
 from model.topic_model import insert_topic, delete_topic
 from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
-from model.interest_model import select_topic, insert_interest
+from model.interest_model import select_topic, upsert_interest
 from config.config import Config
 from util.util import get_og_information
 
@@ -182,7 +182,7 @@ def signup_save():
     session['user_uid'] = user_uid
     return jsonify({
         'resultCode': 'success',
-        'resultMessage': '회원가입을 축하합니다!\n관심 토픽 창으로 이동합니다.',
+        'resultMessage': '회원가입을 축하합니다!',
         'data': ''
     })
 
@@ -232,7 +232,7 @@ def interest_topic():
 @app.route("/interest/save", methods=['POST'])
 def interest_save():
     data = request.get_json()
-    insert_interest(data)
+    upsert_interest(data)
     return jsonify({
         'resultCode': 'success',
         'resultMessage': '관심 토픽이 저장되었습니다.'

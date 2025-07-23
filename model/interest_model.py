@@ -25,13 +25,24 @@ def select_topic():
 # -------------------------------------------------------------------
 # 관심 토픽 저장
 # -------------------------------------------------------------------
-def insert_interest(data):
+def upsert_interest(data):
     session = get_session()
     try:
+        user_uid        = user_session.get('user_uid')
         topic_uid_array = data.get('topic_uid_array', [])
+
+        # 기존 관심토픽 중 삭제된 관심토픽 제거
+        sql, bind_params        = bind_array(sql_map["deleteInterest"].text, "topic_uid_list", topic_uid_array)
+        bind_params["user_uid"] = user_uid
+        session.execute(text(sql), bind_params)
+
+        # 남은 관심토픽 ORDER 재정렬
+        session.execute(sql_map["cleanInterestOrder"], {"user_uid" : user_uid})
+
+        # 관심토픽 저장
         for topic_uid in topic_uid_array:
             interest_param = {
-                "user_uid"      : user_session.get('user_uid')
+                "user_uid"      : user_uid
                 , "topic_uid"   : topic_uid
             }
             session.execute(sql_map["insertInterest"], interest_param)

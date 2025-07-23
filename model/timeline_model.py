@@ -19,6 +19,7 @@ def select_timeline_list():
 
     # 주제 목록 조회
     user_uid    = user_session.get("user_uid")
+    print(user_uid)
     params      = {"user_uid": user_uid} if user_uid else {}
 
     sql_key = "selectTopicList" if user_uid else "selectRandomTopicList"

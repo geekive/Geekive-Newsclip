@@ -249,10 +249,7 @@ class Signup {
                 , success: (response) => {
                     if(response.resultCode == 'success') {
                         alert(response.resultMessage);
-                        this.eventHandlers.closeSignupModal();
-                        this.eventHandlers.reset();
-
-                        interest.eventHandlers.openInterestModal(); // const interest  = new Interest();
+                        location.reload();
                     }
                 }
             })
@@ -307,6 +304,7 @@ class Signin {
             , clearMessage      : this.fnClearMessage
             , signin            : this.fnSignin
             , signout           : this.fnSignout
+            , reset             : this.fnReset
         }
         this.init()
     }
@@ -381,5 +379,10 @@ class Signin {
         $.post('/signout').always(() => {
             window.location.href = '/';
         });
+    }
+
+    fnReset = () => {
+        this.obj.modal.txt.email.$.val('');
+        this.obj.modal.pwd.password.$.val('');
     }
 }
