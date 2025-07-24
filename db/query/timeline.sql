@@ -1,14 +1,20 @@
 -- name: selectRandomTopicList
 SELECT
-	TOPIC_UID       	AS topic_uid
-	, TOPIC_NAME    	AS topic_name
+	T.TOPIC_UID       	AS topic_uid
+	, T.TOPIC_NAME    	AS topic_name
 	, FALSE				AS is_mine
 FROM 
-	TOPIC
+	TOPIC T
+	LEFT JOIN NEWS N
+	ON
+		N.TOPIC_UID = T.TOPIC_UID
 WHERE
-	FLAG_DELETED = 'N'
+	T.FLAG_DELETED = 'N'
+	__SEARCH__
+GROUP BY
+    T.TOPIC_UID, T.TOPIC_NAME
 ORDER BY 
-	RANDOM()
+	COUNT(N.NEWS_UID) DESC
 LIMIT 8;
 
 -- name: selectTopicList
@@ -32,7 +38,7 @@ FROM
 WHERE
     T.FLAG_DELETED = 'N'
 ORDER BY
-    T.REGISTRATION_DATE DESC;
+    I."ORDER" ASC;
 
 -- name: selectDateList
 SELECT
@@ -42,9 +48,13 @@ FROM (
 	SELECT
 		  DATE
 		, TOPIC_UID
+		, FLAG_DELETED
 		, COUNT(*) AS COUNT_PER_TOPIC
 	FROM
 		NEWS
+	WHERE
+		FLAG_DELETED = 'N'
+		__SEARCH__
 	GROUP BY
 		  DATE
 		, TOPIC_UID
@@ -66,5 +76,6 @@ FROM
 	NEWS
 WHERE
 	FLAG_DELETED = 'N'
+	__SEARCH__
 ORDER BY
 	DATE ASC, TOPIC_UID ASC, REGISTRATION_DATE ASC;

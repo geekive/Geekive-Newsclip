@@ -98,24 +98,122 @@ html {
     height: 0;
     /* 초기 숨김 상태 */
     overflow: hidden;
-    background-color: #DCE4EC;
+    background-color: #2c3e50;
     position: fixed;
     top: 80px;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 999;
     transition: height 0.5s ease;
+    color: #fafafa;
 }
 
 /* 검색 펼쳐졌을 때 높이 복원 */
 .search-wrapper.active {
-    height: 80px;
-    border-bottom: 1px solid #2c3e50;
+    height: 120px;
+    border-bottom: 1px solid #fafafa;
+    border-top: 1px solid #fafafa;
+    
 }
+
+.search-wrapper .search-option-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    padding: 16px 24px;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+    padding-bottom: 33px;
+}
+
+/* 기본 스타일 */
+.search-wrapper .search-option {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+/* 라벨 */
+.search-wrapper .search-option label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #fafafa;
+}
+
+/* 공통 input, select 박스 */
+.search-wrapper .search-option input[type="text"],
+.search-wrapper .search-option input[type="date"],
+.search-wrapper .search-option select {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 200px;
+    box-sizing: border-box;
+}
+
+.search-wrapper .search-option.keyword-group select:focus,
+.search-wrapper .search-option.keyword-group input[type="text"]:focus,
+.search-wrapper .search-option input[type="date"]:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: #ccc; /* 기존 테두리 유지 */
+}
+
+/* 검색 옵션 + 검색어 묶음 */
+.search-wrapper .search-option.keyword-group .search-input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+/* 붙어있는 것처럼 */
+.search-wrapper .search-option.keyword-group select {
+    border: none;
+    border-right: 1px solid #ccc;
+    border-radius: 0;
+    min-width: 120px;
+    padding: 10px 12px;
+}
+
+.search-wrapper .search-option.keyword-group input[type="text"] {
+    border: none;
+    padding: 10px 12px;
+    min-width: 280px;
+}
+
+/* 체크박스 */
+.search-wrapper .search-option.checkbox {
+    flex-direction: row;
+    align-items: center; /* 세로 중앙 정렬 */
+    gap: 8px;
+    margin-top: 0; /* 기본 마진 제거 */
+    margin-bottom: 10px;
+}
+
+.search-wrapper .search-option.checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #333;
+}
+
+.search-wrapper .search-option.checkbox label {
+    margin: 0;
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 14px;
+    color: #fafafa;
+}
+
 
 /* 검색창 펼쳐졌을 때 추가 마진 */
 .timeline-container.pushed {
-    margin-top: 80px;
+    margin-top: 120px;
     /* header 80 + search-wrapper 80 */
 }
 

@@ -1,21 +1,30 @@
 class Timeline {
     constructor() {
         this.obj = {
-            document: { $: $(document) }
-            , body: { $: $('body') }
-            , timelineBody: { $: $('#timeline-body') }
-            , timelineRowContainer: { selector: '.timeline-row-container' }
-            , timelineRow: { selector: '.timeline-row' }
-            , topicMenu: { $: $('#topic-menu') }
-            , topicNameArea: { selector: '.topic-name-area' }
-            , cardsContainer: { selector: '.cards-container' }
-            , dateSlot: { selector: '.date-slot' }
-            , newsCard: { selector: '.news-card' }
+            document                : { $: $(document) }
+            , body                  : { $: $('body') }
+            , searchWrapper         : { $ : $("#search-wrapper")}
+            , timelineContainer     : { $ : $("#timeline-container")}
+            , timelineBody          : { $: $('#timeline-body') }
+            , timelineRowContainer  : { selector: '.timeline-row-container' }
+            , timelineRow           : { selector: '.timeline-row' }
+            , topicMenu             : { $: $('#topic-menu') }
+            , topicNameArea         : { selector: '.topic-name-area' }
+            , cardsContainer        : { selector: '.cards-container' }
+            , dateSlot              : { selector: '.date-slot' }
+            , newsCard              : { selector: '.news-card' }
             , txt: {
-                topicName: { selector: '.txt-topic-name' }
+                topicName           : { selector: '.txt-topic-name' }
+                , searchDateFrom    : {$ : $('#txt-search-date-from')}
+                , searchDateTo      : {$ : $('#txt-search-date-to')}
+                , searchKeyword     : {$ : $('#txt-search-keyword')}
+            }
+            , slt: {
+                searchType    : {$ : $('#slt-search-type')}
             }
             , btn: {
-                topicMenu: { $: $('#btn-topic-menu') }
+                searchToggle: { $: $("#search-toggle")}
+                , topicMenu: { $: $('#btn-topic-menu') }
                 , topicNew: { $: $('#btn-topic-new') }
                 , topicNewSave: { selector: '#btn-topic-new-save' }
                 , topicNewCancel: { selector: '#btn-topic-new-cancel' }
@@ -62,6 +71,7 @@ class Timeline {
         }
         this.eventHandlers = {
             selectTimelineList: this.fnSelectTimelineList
+            , openSearchArea: this.fnOpenSearchArea
             , openTopicMenu: this.fnOpenTopicMenu
             , getTimelineTemplate: this.fnGetTimelineTemplate
             , showTopicDeleteSaveButton: this.fnShowTopicDeleteSaveButton
@@ -88,6 +98,13 @@ class Timeline {
         this.obj.document.$.on('click', () => {
             this.obj.topicMenu.$.hide();
         })
+
+        this.obj.btn.searchToggle.$.on('click', this.eventHandlers.openSearchArea.bind(this));
+        this.obj.txt.searchDateFrom.$.on('change', this.eventHandlers.selectTimelineList.bind(this));
+        this.obj.txt.searchDateTo.$.on('change', this.eventHandlers.selectTimelineList.bind(this));
+        this.obj.slt.searchType.$.on('change', this.eventHandlers.selectTimelineList.bind(this));
+        this.obj.txt.searchKeyword.$.on('input', this.eventHandlers.selectTimelineList.bind(this));
+        
         this.obj.btn.topicMenu.$.on('click', this.eventHandlers.openTopicMenu.bind(this));
         this.obj.btn.topicNew.$.on('click', this.eventHandlers.getTimelineTemplate.bind(this));
         this.obj.btn.topicDelete.$.on('click', this.eventHandlers.showTopicDeleteSaveButton.bind(this));
@@ -105,12 +122,39 @@ class Timeline {
     }
 
     fnSelectTimelineList = () => {
-        $.post("/timeline/list", (html) => {
-            this.obj.timelineBody.$.empty();
-            this.obj.timelineBody.$.prepend(html);
-            this.eventHandlers.syncDateWidth();
-            this.eventHandlers.enableDragScrollX();
-        });
+        let date_from   = this.obj.txt.searchDateFrom.$.val()
+        let date_to     = this.obj.txt.searchDateTo.$.val()
+        let type        = this.obj.slt.searchType.$.val()
+        let keyword     = this.obj.txt.searchKeyword.$.val()
+        if(new Date(date_from) > new Date(date_to)){
+            alert('검색 시작일이 검색 종료일을 넘을 수 없습니다.');
+            this.obj.txt.searchDateTo.$.val('');
+            return
+        }
+        let params = {
+            date_from   : date_from
+            , date_to   : date_to
+            , type      : type
+            , keyword   : keyword
+        }
+        $.ajax({
+            url: '/timeline/list'
+            , method: 'POST'
+            , contentType: 'application/json'
+            , data: JSON.stringify(params)
+            , success: (html) => {
+                this.obj.timelineBody.$.empty();
+                this.obj.timelineBody.$.prepend(html);
+                this.eventHandlers.syncDateWidth();
+                this.eventHandlers.enableDragScrollX();
+            }
+        })
+    }
+
+    fnOpenSearchArea = () => {
+        const isActive = this.obj.searchWrapper.$.toggleClass('active').hasClass('active');
+        this.obj.timelineContainer.$.toggleClass('pushed');
+        this.obj.btn.searchToggle.$.text(isActive ? '조건검색 닫기' : '조건검색 열기');
     }
 
     /* topic :: s */

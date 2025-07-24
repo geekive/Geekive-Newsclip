@@ -48,32 +48,47 @@
                 </div>
             {% endif %}
             <div class="spliter"></div>
-            <div class="search-toggle">
+            <div id="search-toggle" class="search-toggle">
                 조건검색 열기
             </div>
         </div>
     </div>
-    <div class="search-wrapper p-cc">
-        {% for news_item in news %}
-            {{ news_item.TITLE }}
-        {% endfor %}
-    </div>
-    <script>
-        $(function(){
-            const $toggleBtn = $(".search-toggle");
-            const $searchWrapper = $(".search-wrapper");
-            const $timeline = $(".timeline-container");
+    <div id="search-wrapper" class="search-wrapper p-cc">
+        <div class="search-option-bar">
+            <!-- 날짜 From -->
+            <div class="search-option">
+                <label for="search-from">검색 시작일</label>
+                <input type="date" id="txt-search-date-from">
+            </div>
 
-            $toggleBtn.on("click", function () {
-                const isActive = $searchWrapper.toggleClass("active").hasClass("active");
-                $timeline.toggleClass("pushed");
-                $toggleBtn.text(isActive ? "조건검색 닫기" : "조건검색 열기");
-            });
-        })
-    </script>
+            <!-- 날짜 To -->
+            <div class="search-option">
+                <label for="search-to">검색 종료일</label>
+                <input type="date" id="txt-search-date-to">
+            </div>
+
+            <!-- 검색어 + 옵션 묶음 -->
+            <div class="search-option keyword-group">
+                <label for="search-keyword">검색</label>
+                <div class="search-input-group">
+                    <select id="slt-search-type">
+                        <option value="topic">토픽</option>
+                        <option value="news">뉴스</option>
+                    </select>
+                    <input type="text" id="txt-search-keyword" placeholder="검색어를 입력하세요">
+                </div>
+            </div>
+
+            <!-- 내가 만든 토픽만 보기 -->
+            <div class="search-option checkbox">
+                <input type="checkbox" id="mine-only" name="mine-only">
+                <label for="mine-only">내가 만든 토픽만 보기</label>
+            </div>
+        </div>
+    </div>
     <!-- header / search :: e -->
 
-    <div class="timeline-container">
+    <div id="timeline-container" class="timeline-container">
         <!-- timeline header :: s -->
         <div class="timeline-header">
             <div class="topic p-cc">

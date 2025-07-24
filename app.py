@@ -31,7 +31,8 @@ def home():
 # ------------------------------
 @app.route("/timeline/list", methods=['POST'])
 def row_list():
-    timeline_list = select_timeline_list()
+    data = request.get_json()
+    timeline_list = select_timeline_list(data)
     return render_template("timeline.html", timeline_list=timeline_list)
 
 @app.route("/timeline/template", methods=['POST'])

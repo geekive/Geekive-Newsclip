@@ -2,6 +2,7 @@ from db.connection import get_session
 from util.sql_loader import load_queries
 from util.util import generate_uid
 from datetime import datetime
+from sqlalchemy import text
 from flask import session as user_session
 import os
 from collections import defaultdict
@@ -14,24 +15,42 @@ sql_map = load_queries(sql_path)
 # -------------------------------------------------------------------
 # 타임라인 리스트 조회
 # -------------------------------------------------------------------
-def select_timeline_list():
+def select_timeline_list(data):
     session = get_session()
+
+    # Search SQL
+    keyword_sql = ""
+    date_sql    = ""
+    date_from   = data.get('date_from')
+    date_to     = data.get('date_to')
+    type        = data.get('type')
+    keyword     = data.get('keyword')
+    if date_from:
+        date_sql += " AND DATE >= '" + date_from + "'"
+    if date_to:
+        date_sql += " AND DATE <= '" + date_to + "'"
+    if type == 'topic' and keyword.strip() != '':
+        keyword_sql += " AND T.TOPIC_NAME LIKE '" + "%" + keyword + "%'"
+    if type == 'news' and keyword.strip() != '':
+        date_sql += " AND TITLE LIKE '" + "%" + keyword + "%'"    
+
+    print(keyword_sql)
 
     # 주제 목록 조회
     user_uid    = user_session.get("user_uid")
-    print(user_uid)
     params      = {"user_uid": user_uid} if user_uid else {}
 
     sql_key = "selectTopicList" if user_uid else "selectRandomTopicList"
-    topic_result = session.execute(sql_map[sql_key], params)
+    print(text(sql_map[sql_key].text.replace(f"__SEARCH__", keyword_sql)))
+    topic_result = session.execute(text(sql_map[sql_key].text.replace(f"__SEARCH__", keyword_sql)), params)
     topic_list = topic_result.fetchall()
 
     # 날짜 목록 조회
-    date_result = session.execute(sql_map["selectDateList"])
+    date_result = session.execute(text(sql_map["selectDateList"].text.replace(f"__SEARCH__", date_sql)))
     date_list = date_result.fetchall()
 
     # 뉴스 목록 조회
-    news_result = session.execute(sql_map["selectNewsList"])
+    news_result = session.execute(text(sql_map["selectNewsList"].text.replace(f"__SEARCH__", date_sql)))
     news_list = news_result.fetchall()
 
     session.close()
