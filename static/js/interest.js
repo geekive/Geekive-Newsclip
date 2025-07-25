@@ -55,21 +55,12 @@ class Interest {
     }
 
     addEventListeners() {
-        // 렌더링 공통 함수
-        const fnTriggerRenderInterest = () => {
-            let keyword         = this.obj.modal.txt.search.$.val().trim();
-            let onlyChecked     = this.obj.modal.chk.showChecked.$.is(':checked');
-            let onlyMadeByMe    = this.obj.modal.chk.topicMadeByMe.$.is(':checked');
-
-            this.eventHandlers.renderInterest(keyword, onlyChecked, onlyMadeByMe);
-        }
-
         /* modal open, close */
         this.obj.btn.interest.$.on('click', this.eventHandlers.openInterestModal.bind(this));
         this.obj.modal.btn.close.$.on('click', this.eventHandlers.closeInterestModal.bind(this));
 
         /* 검색, 저장 */
-        this.obj.modal.txt.search.$.on('input', fnTriggerRenderInterest);
+        this.obj.modal.txt.search.$.on('input', this.eventHandlers.renderInterest.bind(this));
         this.obj.modal.btn.save.$.on('click', this.eventHandlers.save.bind(this));
 
         /* checkbox event collection :: s */
@@ -79,26 +70,29 @@ class Interest {
         // 선택한 토픽만 보기
         this.obj.modal.chk.showChecked.$.on('change', (e) => {
             this.eventHandlers.uncheckExceptFor(e.currentTarget);
-            fnTriggerRenderInterest();
+            this.eventHandlers.renderInterest();
         });
 
         // 내가 만든 토픽만 보기
         this.obj.modal.chk.topicMadeByMe.$.on('change', (e) => {
             this.eventHandlers.uncheckExceptFor(e.currentTarget);
-            fnTriggerRenderInterest();
+            this.eventHandlers.renderInterest();
         });
         
         // 관심 토픽 체크박스 클릭
         this.obj.document.$.on('click', this.obj.modal.chk.interest.selector, () => {
+            const searchHasValue        = this.obj.modal.txt.search.$.val().length > 0;
+            const allChecked            = this.obj.modal.chk.all.$.is(':checked');
             const showCheckedChecked    = this.obj.modal.chk.showChecked.$.is(':checked');
             const topicMadeByMeChecked  = this.obj.modal.chk.topicMadeByMe.$.is(':checked');
 
-            if(!showCheckedChecked && !topicMadeByMeChecked){
+            if(!showCheckedChecked && !topicMadeByMeChecked && !searchHasValue){
                 const anyUnchecked = $(this.obj.modal.chk.interest.selector).toArray().some(el => !$(el).is(':checked'));
                 this.obj.modal.chk.all.$.prop('checked', !anyUnchecked);
                 this.eventHandlers.setCheckedInterest();
             }
-            if(topicMadeByMeChecked){
+
+            if(showCheckedChecked || topicMadeByMeChecked || searchHasValue){
                 const temp = $(this.obj.modal.chk.interest.selector).map(function () {
                     return {topic_uid : $(this).val(), is_checked : $(this).is(':checked')}
                 }).get();
@@ -117,6 +111,8 @@ class Interest {
                     }
                 });
             }
+
+            this.obj.modal.chk.all.$.prop('checked', this.obj.interest.length == this.obj.checkedInterest.length);
         });
         /* checkbox event collection :: e */
     }
@@ -124,6 +120,11 @@ class Interest {
     fnOpenInterestModal = async () => {
         this.obj.interest = await this.eventHandlers.selectInterest();
         this.eventHandlers.renderInterest();
+        
+        // 사용자가 이미 전체 토픽을 저장해놓은 경우 전체선택 버튼이 체크 되도록
+        const anyUnchecked = $(this.obj.modal.chk.interest.selector).toArray().some(el => !$(el).is(':checked'));
+        this.obj.modal.chk.all.$.prop('checked', !anyUnchecked);
+
         this.obj.modal.$.css('display', 'flex');
     }
 
@@ -159,22 +160,26 @@ class Interest {
         return topicResponse.data
     }
 
-    fnRenderInterest = (keyword, onlyChecked, onlyTopicMadeByMe) => {
+    fnRenderInterest = () => {
         let $interestListWrapper    = this.obj.modal.interestListWrapper.$;
         $interestListWrapper.empty();
         
         let interestsCopy = [...this.obj.interest];
         
-        // 내가 선택한 토픽만 보기
+        // 선택한 토픽만 보기
+        let onlyChecked = this.obj.modal.chk.showChecked.$.is(':checked');
         if(onlyChecked){
             interestsCopy = interestsCopy.filter(interest => this.obj.checkedInterest.includes(interest.topic_uid));
         }
 
+        // 내가 만든 토픽만 보기
+        let onlyTopicMadeByMe = this.obj.modal.chk.topicMadeByMe.$.is(':checked');
         if(onlyTopicMadeByMe){
             interestsCopy = interestsCopy.filter(interest => this.obj.topicMadeByMe.includes(interest.topic_uid));
         }
 
         // 검색어 필터
+        let keyword = this.obj.modal.txt.search.$.val().trim();
         if(keyword){
             const keywordInitial = this.eventHandlers.getKoreanInitial(keyword);
             const isPureKorean = /^[가-힣]+$/.test(keyword);  // 입력이 완성형 한글인지 확인
@@ -269,15 +274,17 @@ class Interest {
 
         if($chkAll.is(':checked')){
             $(this.obj.modal.chk.interest.selector).prop('checked', true);
+            this.obj.checkedInterest = this.obj.interest.map(item => item.topic_uid);
         }else{
             $(this.obj.modal.chk.interest.selector).prop('checked', false);
+            this.obj.checkedInterest = [];
         }
-        this.eventHandlers.setCheckedInterest();
+        
     }
 
     fnUncheckExceptFor = ($) => {
         let checkboxArray = [];
-        checkboxArray.push(this.obj.modal.chk.all.$);
+        //checkboxArray.push(this.obj.modal.chk.all.$);
         checkboxArray.push(this.obj.modal.chk.showChecked.$);
         checkboxArray.push(this.obj.modal.chk.topicMadeByMe.$);
         checkboxArray.forEach($checkbox => {

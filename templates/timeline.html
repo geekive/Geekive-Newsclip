@@ -1,6 +1,6 @@
 {% if timeline_list is defined %} <!-- timeline list -->
     {% for timeline in timeline_list %}
-        <div class="timeline-row-container">
+        <div class="timeline-row-container timeline-sortable" id="{{ timeline.topic_uid }}">
             <div class="topic-item p-cc">
                 <span class="topic-name-area">{{ timeline.topic_name }}</span>
                 <input type="text" class="transparent-underline-input hide" placeholder="토픽 입력">
@@ -37,7 +37,7 @@
     </div>
     {% endfor %}
     <!-- 빈 공간을 채운다 :: e -->
-     
+
 {% else %}  <!-- timeline template -->
     <div class="timeline-row-container">
         <div class="topic-item p-cc">

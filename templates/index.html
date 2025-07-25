@@ -7,6 +7,7 @@
     <title>뉴스 타임라인 - 점선 연결</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui/jquery-ui.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/constants.js') }}"></script> 
     <script src="{{ url_for('static', filename='js/interest.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sign.js') }}"></script>
@@ -25,7 +26,6 @@
     {% include 'modal/interest.html' %}
     {% include 'modal/news.html' %}
     
-
     <!-- header / search :: s -->
     <div class="header p-cb">
         <div class="logo">
@@ -79,11 +79,12 @@
                 </div>
             </div>
 
-            <!-- 내가 만든 토픽만 보기 -->
+            <!-- 내가 만든 토픽만 보기
             <div class="search-option checkbox">
                 <input type="checkbox" id="mine-only" name="mine-only">
                 <label for="mine-only">내가 만든 토픽만 보기</label>
             </div>
+             -->
         </div>
     </div>
     <!-- header / search :: e -->

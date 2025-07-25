@@ -54,3 +54,11 @@ SET
       RANKED.TOPIC_UID = INTEREST.TOPIC_UID
 )
 WHERE USER_UID = :user_uid;
+
+-- name: updateInterestOrder
+UPDATE INTEREST
+SET
+  "ORDER" = :order
+WHERE
+  USER_UID      = :user_uid
+  AND TOPIC_UID = :topic_uid

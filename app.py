@@ -11,7 +11,7 @@ from model.timeline_model import select_timeline_list
 from model.news_model import get_news_list, select_news_detail, select_article_list, insert_news, update_news
 from model.topic_model import insert_topic, delete_topic
 from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
-from model.interest_model import select_topic, upsert_interest
+from model.interest_model import select_topic, upsert_interest, update_interest_order
 from config.config import Config
 from util.util import get_og_information
 
@@ -239,6 +239,14 @@ def interest_save():
         'resultMessage': '관심 토픽이 저장되었습니다.'
     })
 
+@app.route("/interest/update/order", methods=['POST'])
+def interest_update_order():
+    data = request.get_json()
+    update_interest_order(data)
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': ''
+    })
 
 # ------------------------------
 # 앱 실행

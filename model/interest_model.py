@@ -52,3 +52,26 @@ def upsert_interest(data):
         raise
     finally:
         session.close()
+
+# -------------------------------------------------------------------
+# 관심 토픽 순서 업데이트
+# -------------------------------------------------------------------
+def update_interest_order(data):
+    session = get_session()
+    try:
+        user_uid        = user_session.get('user_uid')
+        topic_uid_array = data.get('topic_uid_array', [])
+
+        for order, topic_uid in enumerate(topic_uid_array, 1):
+            interest_param = {
+                "user_uid"      : user_uid
+                , "topic_uid"   : topic_uid
+                , "order"       : order
+            }
+            session.execute(sql_map["updateInterestOrder"], interest_param)
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()

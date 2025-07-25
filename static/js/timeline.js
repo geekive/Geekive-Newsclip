@@ -7,6 +7,7 @@ class Timeline {
             , timelineContainer     : { $ : $("#timeline-container")}
             , timelineBody          : { $: $('#timeline-body') }
             , timelineRowContainer  : { selector: '.timeline-row-container' }
+            , timelineSortable      : { selector: '.timeline-sortable' }
             , timelineRow           : { selector: '.timeline-row' }
             , topicMenu             : { $: $('#topic-menu') }
             , topicNameArea         : { selector: '.topic-name-area' }
@@ -121,7 +122,7 @@ class Timeline {
         this.obj.modal.news.btn.delete.$.on('click', this.eventHandlers.deleteNews.bind(this));
     }
 
-    fnSelectTimelineList = () => {
+    fnSelectTimelineList = async () => {
         let date_from   = this.obj.txt.searchDateFrom.$.val()
         let date_to     = this.obj.txt.searchDateTo.$.val()
         let type        = this.obj.slt.searchType.$.val()
@@ -137,7 +138,7 @@ class Timeline {
             , type      : type
             , keyword   : keyword
         }
-        $.ajax({
+        await $.ajax({
             url: '/timeline/list'
             , method: 'POST'
             , contentType: 'application/json'
@@ -149,6 +150,22 @@ class Timeline {
                 this.eventHandlers.enableDragScrollX();
             }
         })
+
+        if(await IS_SIGNED()){
+            this.obj.timelineBody.$.sortable({
+                containment	: `#${this.obj.timelineBody.$.attr('id')}`
+                , tolerance	: 'pointer'
+                , items     : this.obj.timelineSortable.selector
+                , update	: function(){
+                    $.ajax({
+                        url: '/interest/update/order'
+                        , method: 'POST'
+                        , contentType: 'application/json'
+                        , data: JSON.stringify({topic_uid_array : $(this).sortable('toArray')})
+                    })
+                }
+            });
+        }
     }
 
     fnOpenSearchArea = () => {
@@ -301,7 +318,9 @@ class Timeline {
         let startX;
         let scrollLeft;
 
-        $dragArea.off('mousedown').on('mousedown', function (e) {
+        $dragArea.off('mousedown').on('mousedown', (e) => {
+            this.obj.timelineBody.$.sortable('disable');    // sortable 정지
+
             isDown = true;
             isDragging = false;
             startX = e.pageX;
@@ -323,7 +342,9 @@ class Timeline {
             $scrollTarget.scrollLeft(scrollLeft - walk);
         });
 
-        this.obj.document.$.off('mouseup').on('mouseup', function () {
+        this.obj.document.$.off('mouseup').on('mouseup', (e) => {
+            this.obj.timelineBody.$.sortable('enable'); // sortable 재개
+
             isDown = false;
             $dragArea.removeClass('grab');
         });

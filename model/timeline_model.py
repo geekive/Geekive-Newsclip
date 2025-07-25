@@ -34,8 +34,6 @@ def select_timeline_list(data):
     if type == 'news' and keyword.strip() != '':
         date_sql += " AND TITLE LIKE '" + "%" + keyword + "%'"    
 
-    print(keyword_sql)
-
     # 주제 목록 조회
     user_uid    = user_session.get("user_uid")
     params      = {"user_uid": user_uid} if user_uid else {}
