@@ -19,7 +19,8 @@ class Interest {
                     , close   : {$ : $('#btn-interest-modal-close')}
                 }
                 , chk : {
-                    showChecked : {$ : $('#chk-interest-modal-show-checked')}
+                    all : {$ : $('#chk-interest-modal-all')}
+                    , showChecked : {$ : $('#chk-interest-modal-show-checked')}
                     , interest  : {selector : '.chk-interest-modal-interest'}
                 }
             }
@@ -35,6 +36,7 @@ class Interest {
             , setCheckedInterest    : this.fnSetCheckedInterest
             , save                  : this.fnSave
             , reset                 : this.fnReset
+            , checkAllInterest      : this.fnCheckAllInterest
         }
         this.init()
     }
@@ -59,9 +61,22 @@ class Interest {
             this.eventHandlers.renderInterest(keyword, onlyChecked);
         }
         this.obj.modal.txt.search.$.on('input', fnTriggerRenderInterest);
-        this.obj.modal.chk.showChecked.$.on('change', fnTriggerRenderInterest);
+        this.obj.modal.chk.showChecked.$.on('change', () => {
+            if(this.obj.modal.chk.all.$.is(':checked')){
+                this.obj.modal.chk.all.$.prop('checked', false);
+            }
+            fnTriggerRenderInterest();
+        });
+        this.obj.modal.chk.all.$.on('click', this.eventHandlers.checkAllInterest.bind(this));
         this.obj.modal.btn.save.$.on('click', this.eventHandlers.save.bind(this));
-        this.obj.document.$.on('click', this.obj.modal.chk.interest.selector, this.eventHandlers.setCheckedInterest);
+        this.obj.document.$.on('click', this.obj.modal.chk.interest.selector, () => {
+            let falseCount = 0;
+            $(this.obj.modal.chk.interest.selector).each((_, el) => {
+                falseCount += $(el).is(':checked') ? 0 : 1;
+            })
+            this.obj.modal.chk.all.$.prop('checked', falseCount > 0 ? false : true);
+            this.eventHandlers.setCheckedInterest();
+        });
     }
 
     fnOpenInterestModal = async () => {
@@ -193,5 +208,28 @@ class Interest {
                                                         .map(interest => interest.topic_uid);
         this.eventHandlers.renderInterest();
         this.eventHandlers.clearMessage();
+    }
+
+    fnCheckAllInterest = () => {
+        let $chkAll = this.obj.modal.chk.all.$;
+        
+        if(this.obj.modal.chk.showChecked.$.is(':checked')){
+            this.obj.modal.chk.showChecked.$.trigger('click');
+
+            if($chkAll.is(':checked')){
+                $chkAll.prop('checked', false);
+            }else{
+                $chkAll.prop('checked', true);
+            }
+        }
+
+        if($chkAll.is(':checked')){
+            $chkAll.prop('checked', true);
+            $(this.obj.modal.chk.interest.selector).prop('checked', true);
+        }else{
+            $chkAll.prop('checked', false);
+            $(this.obj.modal.chk.interest.selector).prop('checked', false);
+        }
+        this.eventHandlers.setCheckedInterest();
     }
 }

@@ -1154,8 +1154,12 @@ html {
 }
 
 .interest-modal .form-group input[type="checkbox"] {
-    margin-right: 6px;
     cursor: pointer;
+    margin-top: 4px;
+}
+
+.interest-modal .form-group input[type="checkbox"]:checked {
+    accent-color: #2c3e50;  /* 원하는 색으로 설정 */
 }
 
 .interest-modal .interest-list {
