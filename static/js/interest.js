@@ -4,6 +4,7 @@ class Interest {
             document            : {$ : $(document)}
             , interest          : []
             , checkedInterest   : []
+            , topicMadeByMe     : []
             , btn : {
                 interest : {$ : $('#interest')}
             }
@@ -19,9 +20,10 @@ class Interest {
                     , close   : {$ : $('#btn-interest-modal-close')}
                 }
                 , chk : {
-                    all : {$ : $('#chk-interest-modal-all')}
-                    , showChecked : {$ : $('#chk-interest-modal-show-checked')}
-                    , interest  : {selector : '.chk-interest-modal-interest'}
+                    all             : {$ : $('#chk-interest-modal-all')}
+                    , showChecked   : {$ : $('#chk-interest-modal-show-checked')}
+                    , topicMadeByMe : {$ : $('#chk-interest-modal-topic-made-by-me')}
+                    , interest      : {selector : '.chk-interest-modal-interest'}
                 }
             }
         }
@@ -37,6 +39,7 @@ class Interest {
             , save                  : this.fnSave
             , reset                 : this.fnReset
             , checkAllInterest      : this.fnCheckAllInterest
+            , uncheckExceptFor      : this.fnUncheckExceptFor
         }
         this.init()
     }
@@ -52,31 +55,70 @@ class Interest {
     }
 
     addEventListeners() {
+        // 렌더링 공통 함수
+        const fnTriggerRenderInterest = () => {
+            let keyword         = this.obj.modal.txt.search.$.val().trim();
+            let onlyChecked     = this.obj.modal.chk.showChecked.$.is(':checked');
+            let onlyMadeByMe    = this.obj.modal.chk.topicMadeByMe.$.is(':checked');
+
+            this.eventHandlers.renderInterest(keyword, onlyChecked, onlyMadeByMe);
+        }
+
+        /* modal open, close */
         this.obj.btn.interest.$.on('click', this.eventHandlers.openInterestModal.bind(this));
         this.obj.modal.btn.close.$.on('click', this.eventHandlers.closeInterestModal.bind(this));
-        
-        const fnTriggerRenderInterest = () => {
-            let keyword     = this.obj.modal.txt.search.$.val().trim();
-            let onlyChecked = this.obj.modal.chk.showChecked.$.is(':checked');
-            this.eventHandlers.renderInterest(keyword, onlyChecked);
-        }
+
+        /* 검색, 저장 */
         this.obj.modal.txt.search.$.on('input', fnTriggerRenderInterest);
-        this.obj.modal.chk.showChecked.$.on('change', () => {
-            if(this.obj.modal.chk.all.$.is(':checked')){
-                this.obj.modal.chk.all.$.prop('checked', false);
-            }
+        this.obj.modal.btn.save.$.on('click', this.eventHandlers.save.bind(this));
+
+        /* checkbox event collection :: s */
+        // 전체선택
+        this.obj.modal.chk.all.$.on('click', this.eventHandlers.checkAllInterest.bind(this));
+        
+        // 선택한 토픽만 보기
+        this.obj.modal.chk.showChecked.$.on('change', (e) => {
+            this.eventHandlers.uncheckExceptFor(e.currentTarget);
             fnTriggerRenderInterest();
         });
-        this.obj.modal.chk.all.$.on('click', this.eventHandlers.checkAllInterest.bind(this));
-        this.obj.modal.btn.save.$.on('click', this.eventHandlers.save.bind(this));
-        this.obj.document.$.on('click', this.obj.modal.chk.interest.selector, () => {
-            let falseCount = 0;
-            $(this.obj.modal.chk.interest.selector).each((_, el) => {
-                falseCount += $(el).is(':checked') ? 0 : 1;
-            })
-            this.obj.modal.chk.all.$.prop('checked', falseCount > 0 ? false : true);
-            this.eventHandlers.setCheckedInterest();
+
+        // 내가 만든 토픽만 보기
+        this.obj.modal.chk.topicMadeByMe.$.on('change', (e) => {
+            this.eventHandlers.uncheckExceptFor(e.currentTarget);
+            fnTriggerRenderInterest();
         });
+        
+        // 관심 토픽 체크박스 클릭
+        this.obj.document.$.on('click', this.obj.modal.chk.interest.selector, () => {
+            const showCheckedChecked    = this.obj.modal.chk.showChecked.$.is(':checked');
+            const topicMadeByMeChecked  = this.obj.modal.chk.topicMadeByMe.$.is(':checked');
+
+            if(!showCheckedChecked && !topicMadeByMeChecked){
+                const anyUnchecked = $(this.obj.modal.chk.interest.selector).toArray().some(el => !$(el).is(':checked'));
+                this.obj.modal.chk.all.$.prop('checked', !anyUnchecked);
+                this.eventHandlers.setCheckedInterest();
+            }
+            if(topicMadeByMeChecked){
+                const temp = $(this.obj.modal.chk.interest.selector).map(function () {
+                    return {topic_uid : $(this).val(), is_checked : $(this).is(':checked')}
+                }).get();
+
+                // 1. 체크 해제된 항목은 checkedInterest 배열에서 제거
+                temp.forEach(checkedNow => {
+                    if (!checkedNow.is_checked) {
+                        this.obj.checkedInterest = this.obj.checkedInterest.filter(uid => uid !== checkedNow.topic_uid);
+                    }
+                });
+
+                // 2. 새로 체크된 항목은 checkedInterest 배열에 추가
+                temp.forEach(checkedNow => {
+                    if (checkedNow.is_checked && !this.obj.checkedInterest.includes(checkedNow.topic_uid)) {
+                        this.obj.checkedInterest.push(checkedNow.topic_uid);
+                    }
+                });
+            }
+        });
+        /* checkbox event collection :: e */
     }
 
     fnOpenInterestModal = async () => {
@@ -111,10 +153,13 @@ class Interest {
         })
         this.obj.checkedInterest = topicResponse.data.filter(interest => interest.is_interested === 1)
                                                         .map(interest => interest.topic_uid);
+        this.obj.topicMadeByMe = topicResponse.data.filter(interest => interest.is_mine === 1)
+                                                        .map(interest => interest.topic_uid);
+
         return topicResponse.data
     }
 
-    fnRenderInterest = (keyword, onlyChecked) => {
+    fnRenderInterest = (keyword, onlyChecked, onlyTopicMadeByMe) => {
         let $interestListWrapper    = this.obj.modal.interestListWrapper.$;
         $interestListWrapper.empty();
         
@@ -123,6 +168,10 @@ class Interest {
         // 내가 선택한 토픽만 보기
         if(onlyChecked){
             interestsCopy = interestsCopy.filter(interest => this.obj.checkedInterest.includes(interest.topic_uid));
+        }
+
+        if(onlyTopicMadeByMe){
+            interestsCopy = interestsCopy.filter(interest => this.obj.topicMadeByMe.includes(interest.topic_uid));
         }
 
         // 검색어 필터
@@ -203,7 +252,9 @@ class Interest {
 
     fnReset = () => {
         this.obj.modal.txt.search.$.val('');
+        this.obj.modal.chk.all.$.prop('checked', false);
         this.obj.modal.chk.showChecked.$.prop('checked', false);
+        this.obj.modal.chk.topicMadeByMe.$.prop('checked', false);
         this.obj.checkedInterest = this.obj.interest.filter(interest => interest.is_interested === 1)
                                                         .map(interest => interest.topic_uid);
         this.eventHandlers.renderInterest();
@@ -213,23 +264,26 @@ class Interest {
     fnCheckAllInterest = () => {
         let $chkAll = this.obj.modal.chk.all.$;
         
-        if(this.obj.modal.chk.showChecked.$.is(':checked')){
-            this.obj.modal.chk.showChecked.$.trigger('click');
-
-            if($chkAll.is(':checked')){
-                $chkAll.prop('checked', false);
-            }else{
-                $chkAll.prop('checked', true);
-            }
-        }
+        this.eventHandlers.uncheckExceptFor($chkAll);
+        this.eventHandlers.renderInterest();
 
         if($chkAll.is(':checked')){
-            $chkAll.prop('checked', true);
             $(this.obj.modal.chk.interest.selector).prop('checked', true);
         }else{
-            $chkAll.prop('checked', false);
             $(this.obj.modal.chk.interest.selector).prop('checked', false);
         }
         this.eventHandlers.setCheckedInterest();
+    }
+
+    fnUncheckExceptFor = ($) => {
+        let checkboxArray = [];
+        checkboxArray.push(this.obj.modal.chk.all.$);
+        checkboxArray.push(this.obj.modal.chk.showChecked.$);
+        checkboxArray.push(this.obj.modal.chk.topicMadeByMe.$);
+        checkboxArray.forEach($checkbox => {
+            if(!$checkbox.is($)){
+                $checkbox.prop('checked', false);
+            }
+        })
     }
 }

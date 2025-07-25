@@ -1,8 +1,9 @@
 -- name: selectTopic
 SELECT
-  T.TOPIC_UID                 AS topic_uid
-  , T.TOPIC_NAME              AS topic_name
-  , (I.TOPIC_UID IS NOT NULL) AS is_interested
+  T.TOPIC_UID                       AS topic_uid
+  , T.TOPIC_NAME                    AS topic_name
+  , (I.TOPIC_UID IS NOT NULL)       AS is_interested
+  , T.REGISTRATION_USER = :user_uid AS is_mine
 FROM
   TOPIC T
   LEFT JOIN INTEREST I

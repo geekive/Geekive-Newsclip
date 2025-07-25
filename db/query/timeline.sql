@@ -37,6 +37,7 @@ FROM
 		AND I.USER_UID 	= :user_uid
 WHERE
     T.FLAG_DELETED = 'N'
+	__SEARCH__
 ORDER BY
     I."ORDER" ASC;
 

@@ -318,6 +318,11 @@ class Signin {
         this.obj.btn.signout.$.on('click', this.eventHandlers.signout.bind(this));
         this.obj.modal.btn.close.$.on('click', this.eventHandlers.closeSigninModal.bind(this));
         this.obj.modal.btn.signin.$.on('click', this.eventHandlers.signin.bind(this));
+        this.obj.modal.pwd.password.$.on('keydown', (e) => {
+            if(e.key == 'Enter' || e.keyCode == 13){
+                this.eventHandlers.signin();
+            }
+        })
     }
 
     fnOpenSigninModal = () => {
