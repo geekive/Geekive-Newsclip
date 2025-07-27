@@ -14,7 +14,7 @@
             <input id="txt-news-modal-date" type="date"/>
 
             <label for="txt-news-modal-memo">메모</label>
-            <textarea id="txt-news-modal-memo" placeholder="메모 입력"></textarea>
+            <textarea id="txt-news-modal-memo" placeholder="메모 입력" maxlength="200"></textarea>
 
             <!-- 중요도 버튼 그룹 -->
             <label>중요도</label>
@@ -57,68 +57,14 @@
         <!-- 오른쪽 (댓글창) -->
         <div id="modal-comment" class="modal-comment">
             <label>댓글</label>
-            <div class="comment-section" aria-label="댓글 목록">
-                <div class="comment">
-                    <div class="comment-author">홍길동</div>
-                    <div class="comment-text">이 기사 정말 유익했어요! 감사합니다.</div>
-                </div>
-                <div class="comment">
-                    <div class="comment-author">김철수</div>
-                    <div class="comment-text">내용이 좀 더 구체적이면 좋겠네요.</div>
-                </div>
-                <div class="comment">
-                    <div class="comment-author">이영희</div>
-                    <div class="comment-text">잘 읽었습니다. 다음 기사도 기대할게요!</div>
-                </div>
-                <div class="comment">
-                    <div class="comment-author">박민수</div>
-                    <div class="comment-text">댓글 기능 정말 편리합니다.</div>
-                </div>
-                <div class="comment">
-                    <div class="comment-author">최수진</div>
-                    <div class="comment-text">중요한 내용은 꼭 공유해야겠어요.</div>
-                </div>
-            </div>
+            <div id="comment-wrapper" class="comment-section" aria-label="댓글 목록"></div>
 
             <div class="comment-input-area">
-                <textarea id="commentInput" placeholder="댓글을 입력하세요..."></textarea>
-                <button type="button" id="commentSubmitBtn">댓글 작성</button>
+                <textarea id="txt-news-modal-comment" placeholder="댓글을 입력하세요..." maxlength="200"></textarea>
+                <button type="button" id="btn-news-modal-add-comment">댓글 작성</button>
             </div>
         </div>
     </div>
     <input type="hidden" id="hid-news-modal-topic-uid" />
     <input type="hidden" id="hid-news-modal-news-uid" />
 </div>
-
-<script>
-$(function(){
-
-
-// 댓글 작성 버튼 클릭 시 (기본 예제, 입력값을 댓글 목록에 추가)
-$('#commentSubmitBtn').on('click', function() {
-    const $textarea = $('#commentInput');
-    const text = $textarea.val().trim();
-    if (text === "") {
-        alert("댓글 내용을 입력해주세요.");
-        return;
-    }
-
-    // 새 댓글 요소 생성
-    const $commentSection = $('.comment-section');
-    const $newComment = $('<div>').addClass('comment');
-    const $authorDiv = $('<div>').addClass('comment-author').text('익명');
-    const $textDiv = $('<div>').addClass('comment-text').text(text);
-
-    $newComment.append($authorDiv, $textDiv);
-    $commentSection.append($newComment);
-
-    $textarea.val('').focus();
-
-    // 댓글창 스크롤 아래로 이동
-    $commentSection.scrollTop($commentSection.prop("scrollHeight"));
-});
-
-})
-
-
-</script>

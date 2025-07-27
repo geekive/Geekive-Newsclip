@@ -39,7 +39,7 @@ def select_timeline_list(data):
     params      = {"user_uid": user_uid} if user_uid else {}
 
     sql_key = "selectTopicList" if user_uid else "selectRandomTopicList"
-    print(text(sql_map[sql_key].text.replace(f"__SEARCH__", keyword_sql)))
+    
     topic_result = session.execute(text(sql_map[sql_key].text.replace(f"__SEARCH__", keyword_sql)), params)
     topic_list = topic_result.fetchall()
 

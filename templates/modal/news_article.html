@@ -1,7 +1,7 @@
 {% if article_list is defined %}
     {% for article in article_list %}
         <div class="article-item">
-            <input type="checkbox" class="chk-news-modal-article">
+            <input type="checkbox" class="chk-news-modal-article" {% if not article.is_mine %}disabled{% endif %}>
             <div class="thumbnail" style="background-image:url('{{ article.image_url }}');" onclick="window.open('{{ article.url }}', '_blank')"></div>
             <div class="content" onclick="window.open('{{ article.url }}', '_blank')">
                 <div class="title">{{ article.title }}</div>

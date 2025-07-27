@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # 내부 모듈 import
 from model.timeline_model import select_timeline_list
-from model.news_model import get_news_list, select_news_detail, select_article_list, insert_news, update_news
+from model.news_model import get_news_list, select_news_detail, select_article_list, insert_article, insert_news, update_news, select_comment_list, insert_comment
 from model.topic_model import insert_topic, delete_topic
 from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
 from model.interest_model import select_topic, upsert_interest, update_interest_order
@@ -106,6 +106,9 @@ def news_detail():
     news = select_news_detail(data)
     article_list = select_article_list(data)
     news['article_list_html'] = render_template("modal/news_article.html", article_list=article_list)
+    comment_list = select_comment_list(data)
+    news['comment_list_html'] = render_template("modal/news_comment.html", comment_list=comment_list)
+    
 
     return jsonify({
         'resultCode': 'success',
@@ -113,20 +116,36 @@ def news_detail():
         'data': news
     })
 
+@app.route("/news/comment", methods=['POST'])
+def news_comment():
+    data = request.get_json()
+    insert_comment(data)
+
+    comment_list = select_comment_list(data)
+    html = render_template("modal/news_comment.html", comment_list=comment_list)
+
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '댓글이 저장되었습니다.',
+        'data' : html
+    })
+
 # ------------------------------
 # 뉴스 기사 URL 스크랩핑
 # ------------------------------
 @app.route("/news/article", methods=['POST'])
 def news_article():
-    data = request.get_json()
-    url = data.get('url', '').strip()
+    data    = request.get_json()
+    url     = data.get('url', '').strip()
 
     response = requests.post(
         request.host_url.rstrip('/') + url_for('web_scraping'),
         json={'url': url}
     )
 
-    og = response.json()
+    og              = response.json()
+    og["news_uid"]  = data.get('news_uid', '').strip()
+    insert_article(og)
 
     return jsonify({
         'code': 'success',

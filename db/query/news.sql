@@ -9,6 +9,14 @@ SELECT
     , N.DATE        AS date
     , N.MEMO        AS memo
     , N.IMPORTANCE  AS importance
+    , CASE 
+		    WHEN 
+          N.REGISTRATION_USER = :user_uid
+		    THEN 
+          TRUE
+		    ELSE 
+          FALSE
+	    END           AS is_mine
 FROM 
     NEWS N
 	  INNER JOIN TOPIC T
@@ -19,12 +27,20 @@ WHERE
 
 -- name: selectArticleList
 SELECT
-  ARTICLE_UID   AS article_uid
-  , URL         AS url
-  , PUBLISHER   AS publisher
-  , IMAGE_URL   AS image_url
-  , TITLE       AS title
-  , DESCRIPTION AS description
+  ARTICLE_UID     AS article_uid
+  , URL           AS url
+  , PUBLISHER     AS publisher
+  , IMAGE_URL     AS image_url
+  , TITLE         AS title
+  , DESCRIPTION   AS description
+  , CASE 
+      WHEN 
+        REGISTRATION_USER = :user_uid
+      THEN 
+        TRUE
+      ELSE 
+        FALSE
+    END           AS is_mine
 FROM 
   ARTICLE
 WHERE
@@ -96,3 +112,36 @@ SET
 WHERE
   NEWS_UID = :news_uid
   AND ARTICLE_UID NOT IN (__ARTICLE_UID_LIST__)
+
+-- name: selectCommentList
+SELECT
+  C.COMMENT_UID           AS comment_uid
+  , C.NEWS_UID            AS news_uid
+  , C.COMMENT             AS comment
+  , C.REGISTRATION_DATE   AS registration_date
+  , C.REGISTRATION_USER   AS registration_user
+  , U.NICKNAME            AS nickname
+FROM 
+  COMMENT C
+  LEFT JOIN USER U
+  ON
+	U.USER_UID = C.REGISTRATION_USER
+WHERE
+  C.NEWS_UID = :news_uid
+ORDER BY 
+  C.REGISTRATION_DATE DESC;
+
+-- name: insertComment
+INSERT INTO COMMENT (
+  COMMENT_UID
+  , NEWS_UID
+  , COMMENT
+  , REGISTRATION_DATE
+  , REGISTRATION_USER
+) VALUES (
+    :comment_uid
+  , :news_uid
+  , :comment
+  , :registration_date
+  , :registration_user
+);

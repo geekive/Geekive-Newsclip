@@ -1,0 +1,11 @@
+{% if comment_list is defined %}
+    {% for comment in comment_list %}
+        <div class="comment">
+            <div class="comment-meta">
+                <span class="comment-author">{{ comment.nickname }}</span>
+                <span class="comment-date">{{ comment.registration_date }}</span>
+            </div>
+            <div class="comment-text">{{ comment.comment }}</div>
+        </div>
+    {% endfor %}
+{% endif %}

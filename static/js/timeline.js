@@ -38,12 +38,15 @@ class Timeline {
                     , articleWrapper: { $: $('#news-modal-article-wrapper') }
                     , articleItem: { selector: '.article-item' }
                     , modalComment: { $: $('#modal-comment') }
+                    , commentWrapper: { $: $('#comment-wrapper')}
+                    , comment: { selector: '.comment' }
                     , txt: {
                         topicName: { $: $('#txt-news-modal-topic-name') }
                         , title: { $: $('#txt-news-modal-title') }
                         , date: { $: $('#txt-news-modal-date') }
                         , memo: { $: $('#txt-news-modal-memo') }
                         , url: { $: $('#txt-news-modal-url') }
+                        , comment: { $: $('#txt-news-modal-comment') }
                     }
                     , hid: {
                         topicUid: { $: $('#hid-news-modal-topic-uid') }
@@ -66,6 +69,7 @@ class Timeline {
                         , close: { $: $('#btn-news-modal-close') }
                         , addArticle: { $: $('#btn-news-modal-add-article') }
                         , deleteArticle: { $: $('#btn-news-modal-delete-article') }
+                        , addComment: { $: $('#btn-news-modal-add-comment') }
                     }
                 }
             }
@@ -86,6 +90,7 @@ class Timeline {
             , resetNewsModal: this.fnResetNewsModal
             , saveNews: this.fnSaveNews
             , deleteNews: this.fnDeleteNews
+            , addComment: this.fnAddComment
         }
         this.init();
     }
@@ -120,6 +125,7 @@ class Timeline {
         this.obj.modal.news.btn.addArticle.$.on('click', this.eventHandlers.addArticle.bind(this));
         this.obj.modal.news.btn.deleteArticle.$.on('click', this.eventHandlers.deleteArticle.bind(this));
         this.obj.modal.news.btn.delete.$.on('click', this.eventHandlers.deleteNews.bind(this));
+        this.obj.modal.news.btn.addComment.$.on('click', this.eventHandlers.addComment.bind(this));
     }
 
     fnSelectTimelineList = async () => {
@@ -395,7 +401,7 @@ class Timeline {
                 , method: 'POST'
                 , contentType: 'application/json'
                 , data: JSON.stringify({ news_uid: $this.data('news-uid') })
-                , success: (response) => {
+                , success: async (response) => {
                     if (response.resultCode == 'success') {
                         // 필드에 데이터 입력
                         let news = response.data;
@@ -408,6 +414,31 @@ class Timeline {
                             return $(this).val() === news.importance;
                         }).first().click();
                         this.obj.modal.news.articleWrapper.$.html(news.article_list_html);
+                        this.obj.modal.news.commentWrapper.$.html(news.comment_list_html);
+
+                        // 비로그인시 입력 필드 및 버튼 비활성화
+                        let isSigned = await IS_SIGNED()
+                        this.obj.modal.news.txt.title.$.prop('readonly', !isSigned);
+                        this.obj.modal.news.txt.date.$.prop('readonly', !isSigned);
+                        this.obj.modal.news.txt.memo.$.prop('readonly', !isSigned);
+                        this.obj.modal.news.rdo.importance.$.prop('disabled', !isSigned);
+                        this.obj.modal.news.btn.edit.$.prop('disabled', !isSigned);
+                        this.obj.modal.news.btn.delete.$.prop('disabled', !isSigned);
+                        this.obj.modal.news.txt.url.$.prop('readonly', !isSigned);
+                        this.obj.modal.news.btn.addArticle.$.prop('disabled', !isSigned);
+                        this.obj.modal.news.btn.deleteArticle.$.prop('disabled', !isSigned);
+                        //$(this.obj.modal.news.chk.selector).prop('disabled', !isSigned);
+                        this.obj.modal.news.txt.comment.$.prop('readonly', !isSigned);
+                        this.obj.modal.news.btn.addComment.$.prop('disabled', !isSigned);
+
+                        // 사용자가 등록한 뉴스가 아니면 모달 내 왼쪽 뉴스 정보란을 비활성화
+                        let isMine = news.is_mine;
+                        this.obj.modal.news.txt.title.$.prop('readonly', !isMine);
+                        this.obj.modal.news.txt.date.$.prop('readonly', !isMine);
+                        this.obj.modal.news.txt.memo.$.prop('readonly', !isMine);
+                        this.obj.modal.news.rdo.importance.$.prop('disabled', !isMine);
+                        this.obj.modal.news.btn.edit.$.prop('disabled', !isMine);
+                        this.obj.modal.news.btn.delete.$.prop('disabled', !isMine);
 
                         // 모달 오픈
                         this.obj.modal.news.$.css('display', 'flex');
@@ -432,6 +463,7 @@ class Timeline {
         this.obj.modal.news.rdo.importance.$.first().trigger('click');
         this.obj.modal.news.txt.url.$.val('');
         this.obj.modal.news.$.find(this.obj.modal.news.articleItem.selector).remove();
+        this.obj.modal.news.$.find(this.obj.modal.news.comment.selector).remove();
     }
 
     fnSaveNews = (mode) => {
@@ -490,12 +522,15 @@ class Timeline {
 
     /* 기사를 등록 한다 */
     fnAddArticle = () => {
-        let url = this.obj.modal.news.txt.url.$.val();
+        let params = {
+            news_uid    : this.obj.modal.news.hid.newsUid.$.val()
+            , url       : this.obj.modal.news.txt.url.$.val()
+        }
         $.ajax({
             url: '/news/article'
             , method: 'POST'
             , contentType: 'application/json'
-            , data: JSON.stringify({ url: url })
+            , data: JSON.stringify(params)
             , success: (response) => {
                 if (response.code == 'success') {
                     let data = response.data;
@@ -516,6 +551,27 @@ class Timeline {
 
     fnDeleteNews = () => {
         confirm('뉴스를 삭제하시겠습니까?');
+    }
+
+    fnAddComment = () => {
+        let params = {
+            news_uid    : this.obj.modal.news.hid.newsUid.$.val()
+            , comment   : this.obj.modal.news.txt.comment.$.val()
+        }
+        $.ajax({
+            url: '/news/comment'
+            , method: 'POST'
+            , contentType: 'application/json'
+            , data: JSON.stringify(params)
+            , success: (response) => {
+                console.log(response);
+                if (response.resultCode == 'success') {
+                    $(this.obj.modal.news.comment.selector).remove();
+                    this.obj.modal.news.txt.comment.$.val('');
+                    this.obj.modal.news.commentWrapper.$.html(response.data);
+                }
+            }
+        })
     }
     /* timeline :: e */
 
