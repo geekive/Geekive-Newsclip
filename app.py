@@ -1,14 +1,14 @@
 import sys
 import os
 import requests
-from flask import Flask, render_template, request, jsonify, url_for, session, redirect
+from flask import Flask, render_template, request, jsonify, url_for, session
 
 # 경로 설정
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # 내부 모듈 import
 from model.timeline_model import select_timeline_list
-from model.news_model import get_news_list, select_news_detail, select_article_list, insert_article, insert_news, update_news, select_comment_list, insert_comment
+from model.news_model import select_news_detail, select_article_list, insert_article, insert_news, update_news, select_comment_list, insert_comment
 from model.topic_model import insert_topic, delete_topic
 from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
 from model.interest_model import select_topic, upsert_interest, update_interest_order
@@ -23,8 +23,7 @@ app.secret_key = Config.SECRET_KEY
 # ------------------------------
 @app.route("/")
 def home():
-    news = get_news_list()
-    return render_template("index.html", news=news)
+    return render_template("index.html")
 
 # ------------------------------
 # 타임라인 관련

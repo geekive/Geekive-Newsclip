@@ -13,15 +13,6 @@ sign_sql_path = os.path.join(os.path.dirname(__file__), "../db/query", "sign.sql
 sign_sql_map = load_queries(news_sql_path)
 
 # -------------------------------------------------------------------
-# 뉴스 목록 조회
-# -------------------------------------------------------------------
-def get_news_list():
-    session = get_session()
-    result = session.execute(news_sql_map["selectNews"])
-    session.close()
-    return result.fetchall()
-
-# -------------------------------------------------------------------
 # 뉴스 상세 조회
 # -------------------------------------------------------------------
 def select_news_detail(data):
