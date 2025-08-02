@@ -157,12 +157,12 @@ class Timeline {
             }
         })
 
-        if(await IS_SIGNED()){
-            this.obj.timelineBody.$.sortable({
-                containment	: `#${this.obj.timelineBody.$.attr('id')}`
-                , tolerance	: 'pointer'
-                , items     : this.obj.timelineSortable.selector
-                , update	: function(){
+        this.obj.timelineBody.$.sortable({
+            containment	: `#${this.obj.timelineBody.$.attr('id')}`
+            , tolerance	: 'pointer'
+            , items     : this.obj.timelineSortable.selector
+            , update	: async () => {
+                if(await IS_SIGNED()){
                     $.ajax({
                         url: '/interest/update/order'
                         , method: 'POST'
@@ -170,8 +170,8 @@ class Timeline {
                         , data: JSON.stringify({topic_uid_array : $(this).sortable('toArray')})
                     })
                 }
-            });
-        }
+            }
+        });
     }
 
     fnOpenSearchArea = () => {

@@ -4,7 +4,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>뉴스 타임라인 - 점선 연결</title>
+    <meta property="og:url" content="https://newsclip.geekive.com">
+    <meta property="og:title" content="Newsclip">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ url_for('static', filename='image/meta_logo.png') }}">
+    <meta property="og:description" content="날짜로 기록된 뉴스, 한눈에 펼쳐지는 타임라인">
+
+    <link rel="icon" href="{{ url_for('static', filename='image/favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='image/favicon.ico') }}">
+
+    <title>Newsclip :: 한눈에 펼쳐지는 뉴스 타임라인</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery-ui/jquery-ui.min.js') }}"></script>
