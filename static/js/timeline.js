@@ -154,6 +154,9 @@ class Timeline {
                 this.obj.timelineBody.$.prepend(html);
                 this.eventHandlers.syncDateWidth();
                 this.eventHandlers.enableDragScrollX();
+                if(this.obj.btn.topicDelete.$.data('open')){
+                    $(this.obj.btn.topicDeleteSave.selector).toggle();
+                }
             }
         })
 
@@ -161,7 +164,7 @@ class Timeline {
             containment	: `#${this.obj.timelineBody.$.attr('id')}`
             , tolerance	: 'pointer'
             , items     : this.obj.timelineSortable.selector
-            , update	: async () => {
+            , update	: async function(){
                 if(await IS_SIGNED()){
                     $.ajax({
                         url: '/interest/update/order'
@@ -550,7 +553,21 @@ class Timeline {
     }
 
     fnDeleteNews = () => {
-        confirm('뉴스를 삭제하시겠습니까?');
+        if(confirm('뉴스를 삭제하시겠습니까?')){
+            let newsUid = this.obj.modal.news.hid.newsUid.$.val();
+            $.ajax({
+                url: '/news/delete'
+                , method: 'POST'
+                , contentType: 'application/json'
+                , data: JSON.stringify({news_uid : newsUid})
+                , success: (response) => {
+                    if(response.resultCode == 'success') {
+                        this.eventHandlers.selectTimelineList();
+                        this.eventHandlers.closeNewsModal();
+                    }
+                }
+            })
+        }
     }
 
     fnAddComment = () => {

@@ -105,7 +105,7 @@ def update_news(data):
         existing_uids = [a.get('article_uid') for a in article_array if a.get('article_uid')]
 
         # 기존 기사 중 삭제된 기사 제거
-        sql, bind_params = bind_array(sql_map["deleteArticle"].text, "article_uid_list", existing_uids)
+        sql, bind_params = bind_array(news_sql_map["deleteArticle"].text, "article_uid_list", existing_uids)
         bind_params["news_uid"] = news_uid
         session.execute(text(sql), bind_params)
 
@@ -125,6 +125,26 @@ def update_news(data):
                 }
                 session.execute(news_sql_map["insertArticle"], article_param)
 
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        
+# -------------------------------------------------------------------
+# 뉴스 삭제
+# -------------------------------------------------------------------
+def delete_news(data):
+    session = get_session()
+    try:
+        news_uid = data.get('news_uid', '').strip()
+        news_params = {
+            "news_uid"      : news_uid,
+            "update_date"   : datetime.now(),
+            "update_user"   : user_session.get('user_uid')
+        }
+        session.execute(news_sql_map["deleteNews"], news_params)
         session.commit()
     except Exception:
         session.rollback()

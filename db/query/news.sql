@@ -105,6 +105,15 @@ SET
 WHERE
   NEWS_UID = :news_uid;
 
+-- name: deleteNews
+UPDATE NEWS
+SET
+  FLAG_DELETED  = 'Y'
+  , UPDATE_DATE = :update_date
+  , UPDATE_USER = :update_user
+WHERE
+  NEWS_UID = :news_uid;
+
 -- name: deleteArticle
 UPDATE ARTICLE
 SET
