@@ -63,6 +63,10 @@ html {
     margin-right: 20px;
 }
 
+.header .sign-wrapper .notification {
+    margin-right: 20px;
+}
+
 .header .sign-wrapper .interest {
     margin-right: 20px;
 }
@@ -88,6 +92,7 @@ html {
 .header .sign-wrapper .signin:hover,
 .signup:hover,
 .signout:hover,
+.notification:hover,
 .interest:hover,
 .search-toggle:hover {
     font-weight: 600;

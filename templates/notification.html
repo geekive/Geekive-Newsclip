@@ -1,0 +1,342 @@
+<style>
+  .notification .badge {
+    position: absolute;
+    min-width: 17px;
+    min-height: 17px;
+    top: 22px;
+    right: 324px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    line-height: 1;
+  }
+
+  /* 알림 패널 */
+  .notification-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 360px;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+    transition: right 0.35s ease;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #2c3e50;
+    overflow: hidden;
+  }
+
+  /* 헤더: 80px 고정, 패딩 없애고 가운데 정렬 */
+  .notification-panel.open {
+    right: 0;
+  }
+
+  .notification-panel .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    padding: 0 16px;
+    background: #2c3e50;
+    color: #fafafa;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+  }
+
+  .notification-panel .panel-header .title {
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .notification-panel .panel-header button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #fafafa;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  /* 본문 */
+  .notification-panel .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    background: #fafafa;
+  }
+
+  .notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* 알림 항목: 컴팩트, 줄 제한 */
+  .notification-item {
+    display: flex;
+    align-items: center;
+    /* 이거 있어야 중앙 정렬 */
+    gap: 12px;
+    padding: 10px 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+  }
+
+  .notification-item.unread {
+    border-left: 4px solid #2c3e50;
+    background: #f5f8fc;
+  }
+
+  .notification-item:hover {
+    background: #f0f0f0;
+  }
+
+  .notification-item .select-checkbox {
+    flex-shrink: 0;
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #2c3e50;
+  }
+
+  .notification-item .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .notification-item .message {
+    font-weight: 600;
+    color: #2c3e50;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .notification-item .meta {
+    font-size: 11px;
+    color: #888;
+  }
+
+  /* 푸터: 80px 고정, 중앙 정렬 */
+  .notification-panel .panel-footer {
+    height: 80px;
+    padding: 0 16px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    box-sizing: border-box;
+  }
+
+  /* 버튼 공통 */
+  .notification-panel .panel-footer button {
+    flex: 0 0 100px;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 0;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  /* 삭제 버튼만 빨간색 */
+  #btn-delete-selected {
+    background: #e74c3c !important;
+  }
+
+  #btn-delete-selected:hover {
+    background: #c0392b !important;
+  }
+
+  .notification-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+    z-index: 1050;
+  }
+
+  .notification-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* 여유 공간 확보 (헤더 80px + 푸터 80px 고려한 외부) */
+  .main {
+    padding-top: 100px;
+    /* 기존 헤더 감안 */
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+  }
+</style>
+
+<!-- 알림 패널 -->
+<div id="notification-panel" class="notification-panel" aria-hidden="true">
+  <div class="panel-header">
+    <div class="title">알림</div>
+    <button id="btn-notification-panel-close" aria-label="Close">&times;</button>
+  </div>
+  <div class="panel-body">
+    <div id="notification-panel-list-wrapper" class="notification-list" aria-live="polite"></div>
+  </div>
+  <div class="panel-footer">
+    <button id="btn-toggle-select">전체선택</button>
+    <button id="btn-mark-all-read">읽음처리</button>
+    <button id="btn-delete-selected">삭제</button>
+  </div>
+</div>
+<div id="notification-backdrop" class="notification-backdrop" aria-hidden="true"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(function () {
+    const $notifBtn = $('#notification');
+    const $panel = $('#notification-panel');
+    const $backdrop = $('#notification-backdrop');
+    const $closeBtn = $('#btn-close-notification');
+    const $markAllReadBtn = $('#btn-mark-all-read');
+    const $deleteSelectedBtn = $('#btn-delete-selected');
+    const $toggleSelectBtn = $('#btn-toggle-select');
+    const $badge = $notifBtn.find('.badge');
+
+    function renderNotifications(items) {
+      const $list = $('.notification-list');
+      $list.empty();
+      let unreadCount = 0;
+
+      $.each(items, function (idx, it) {
+        const $item = $('<div>')
+          .addClass('notification-item')
+          .toggleClass('unread', it.unread)
+          .attr('tabindex', '0')
+          .attr('data-index', idx)
+          .html(`
+          <input type="checkbox" class="select-checkbox" aria-label="선택" />
+          <div class="content">
+            <div class="message">${it.message}</div>
+            <div class="meta">${it.time}</div>
+          </div>
+        `);
+
+        $list.append($item);
+
+        if (it.unread) unreadCount++;
+
+        $item.on('click', function (e) {
+          if ($(e.target).is('.select-checkbox')) return;
+          if ($item.hasClass('unread')) {
+            $item.removeClass('unread');
+            unreadCount = Math.max(0, unreadCount - 1);
+            updateBadge(unreadCount);
+          }
+        });
+      });
+
+      updateBadge(unreadCount);
+    }
+
+    function updateBadge(count) {
+      if (!$badge.length) return;
+      if (count <= 0) {
+        $badge.hide();
+      } else {
+        $badge.show();
+        $badge.text(count > 99 ? '99+' : count);
+        $badge.attr('aria-label', `${count} new notifications`);
+      }
+    }
+
+    // 더미 데이터 (20개)
+    const sampleNotifications = [
+      { message: '새 댓글이 달렸어요.', time: '방금 전', unread: true },
+      { message: '팔로워가 늘었어요.', time: '10분 전', unread: true },
+      { message: '기능 업데이트: 검색 필터가 개선되었습니다.', time: '어제', unread: false },
+      { message: '응답이 도착했습니다.', time: '2시간 전', unread: true },
+      { message: '새로운 친구 요청이 있습니다.', time: '5분 전', unread: true },
+      { message: '서버 점검이 완료되었습니다.', time: '3시간 전', unread: false },
+      { message: '이벤트가 곧 시작됩니다.', time: '30분 전', unread: true },
+      { message: '메시지가 도착했습니다.', time: '어제 오후', unread: false },
+      { message: '프로필 사진이 변경되었습니다.', time: '2일 전', unread: false },
+      { message: '계정 보안 설정이 업데이트되었습니다.', time: '1시간 전', unread: true },
+      { message: '새 게시물이 업로드되었습니다.', time: '오늘 오전', unread: true },
+      { message: '친구가 댓글을 남겼습니다.', time: '10초 전', unread: true },
+      { message: '할인 쿠폰이 발급되었습니다.', time: '3일 전', unread: false },
+      { message: '비밀번호가 변경되었습니다.', time: '5시간 전', unread: true },
+      { message: '이용 약관이 변경되었습니다.', time: '1주일 전', unread: false },
+      { message: '새 알림이 있습니다.', time: '방금 전', unread: true },
+      { message: '채팅방 초대가 도착했습니다.', time: '4분 전', unread: true },
+      { message: '업데이트가 성공적으로 완료되었습니다.', time: '어제 오후', unread: false },
+      { message: '포인트가 적립되었습니다.', time: '6시간 전', unread: true },
+      { message: '일일 퀘스트가 완료되었습니다.', time: '20분 전', unread: true },
+    ];
+    renderNotifications(sampleNotifications);
+
+    // 전체선택 토글
+    $toggleSelectBtn.on('click', function () {
+      const $checkboxes = $('.select-checkbox');
+      const allChecked = $checkboxes.length > 0 && $checkboxes.filter(':checked').length === $checkboxes.length;
+      $checkboxes.prop('checked', !allChecked);
+    });
+
+    // 읽음처리 버튼 (읽음 여부 상관 없이 모두 읽음처리 + 체크박스 해제)
+    $markAllReadBtn.on('click', function () {
+      $('.notification-item.unread').removeClass('unread');
+      $('.select-checkbox').prop('checked', false);
+      updateBadge(0);
+    });
+
+    // 삭제 버튼 (선택된 항목 삭제 + 뱃지 갱신)
+    $deleteSelectedBtn.on('click', function () {
+      let unreadDelta = 0;
+      $('.select-checkbox:checked').each(function () {
+        const $item = $(this).closest('.notification-item');
+        if ($item.hasClass('unread')) unreadDelta++;
+        $item.remove();
+      });
+      if (unreadDelta > 0) {
+        const current = parseInt($badge.text().replace(/\D/g, ''), 10) || 0;
+        updateBadge(Math.max(0, current - unreadDelta));
+      }
+    });
+
+    // 키보드 접근성 (Enter / Space 누르면 토글)
+    $notifBtn.on('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        $notifBtn.trigger('click');
+      }
+    });
+  });
+</script>

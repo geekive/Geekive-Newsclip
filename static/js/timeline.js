@@ -415,7 +415,7 @@ class Timeline {
                         this.obj.modal.news.txt.memo.$.val(news.memo);
                         this.obj.modal.news.rdo.importance.$.filter(function () {
                             return $(this).val() === news.importance;
-                        }).first().click();
+                        }).first().prop('checked', true);
                         this.obj.modal.news.articleWrapper.$.html(news.article_list_html);
                         this.obj.modal.news.commentWrapper.$.html(news.comment_list_html);
 

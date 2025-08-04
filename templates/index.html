@@ -21,6 +21,7 @@
     <script src="{{ url_for('static', filename='js/interest.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sign.js') }}"></script>
     <script src="{{ url_for('static', filename='js/timeline.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notification.js') }}"></script>
     <script>
         function IS_SIGNED() {
             return $.post('/signed').then(response => {
@@ -34,6 +35,7 @@
     {% include 'modal/signup.html' %}
     {% include 'modal/interest.html' %}
     {% include 'modal/news.html' %}
+    
     
     <!-- header / search :: s -->
     <div class="header p-cb">
@@ -49,6 +51,10 @@
                     회원가입
                 </div>
             {% else %}
+                <div id="notification" class="notification" aria-label="Notifications" role="button" tabindex="0">
+                    알림
+                    <span class="badge">13</span>
+                </div>
                 <div id="interest" class="interest">
                     내 관심 토픽
                 </div>
@@ -130,10 +136,14 @@
     </div>
     <script>
         // 클래스마다 서로 의존성이 있어 아래와 같은 순서로 호출해야함.
-        const timeline  = new Timeline();
-        const signin    = new Signin();
-        const interest  = new Interest();
-        const signup    = new Signup();
+        const timeline      = new Timeline();
+        const signin        = new Signin();
+        const interest      = new Interest();
+        const signup        = new Signup();
+    </script>
+    {% include 'notification.html' %}
+    <script>
+        const notification  = new Notification();
     </script>
 </body>
 

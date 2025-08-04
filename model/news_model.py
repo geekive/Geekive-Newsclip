@@ -7,10 +7,12 @@ from flask import session as user_session
 import os
 
 # 쿼리 로딩
-news_sql_path = os.path.join(os.path.dirname(__file__), "../db/query", "news.sql")
-news_sql_map = load_queries(news_sql_path)
-sign_sql_path = os.path.join(os.path.dirname(__file__), "../db/query", "sign.sql")
-sign_sql_map = load_queries(news_sql_path)
+news_sql_path           = os.path.join(os.path.dirname(__file__), "../db/query", "news.sql")
+news_sql_map            = load_queries(news_sql_path)
+sign_sql_path           = os.path.join(os.path.dirname(__file__), "../db/query", "sign.sql")
+sign_sql_map            = load_queries(news_sql_path)
+notification_sql_path   = os.path.join(os.path.dirname(__file__), "../db/query", "notification.sql")
+notification_sql_map    = load_queries(notification_sql_path)
 
 # -------------------------------------------------------------------
 # 뉴스 상세 조회
@@ -207,6 +209,17 @@ def insert_comment(data):
             , "registration_user"   : user_session.get('user_uid')
         }
         session.execute(news_sql_map["insertComment"], comment_params)
+
+        notification_params = {
+            "ntf_uid"               : generate_uid("NTF")
+            , "type"                : "COMMNET"
+            , "target_uid"          : data.get('news_uid')
+            , "registration_date"   : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            , "registration_user"   : user_session.get('user_uid')
+        }
+        useruid_sql = f"(SELECT REGISTRATION_USER FROM NEWS WHERE NEWS_UID = '{data.get('news_uid')}')"
+        session.execute(text(notification_sql_map["insertNotification"].text.replace(f"__USER__", useruid_sql)), notification_params)
+        
         session.commit()
     except Exception:
         session.rollback()

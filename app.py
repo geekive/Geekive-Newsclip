@@ -12,6 +12,7 @@ from model.news_model import select_news_detail, select_article_list, insert_art
 from model.topic_model import insert_topic, delete_topic
 from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
 from model.interest_model import select_topic, upsert_interest, update_interest_order
+from model.notification_model import select_notification
 from config.config import Config
 from util.util import get_og_information
 
@@ -273,6 +274,18 @@ def interest_update_order():
     return jsonify({
         'resultCode': 'success',
         'resultMessage': ''
+    })
+
+# ------------------------------
+# 알림 조회
+# ------------------------------
+@app.route("/notification/list", methods=['POST'])
+def notification_list():
+    notification = select_notification()
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': '',
+        'data': notification
     })
 
 # ------------------------------
