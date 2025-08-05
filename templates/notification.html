@@ -19,8 +19,8 @@
   .notification-panel {
     position: fixed;
     top: 0;
-    right: -400px;
-    width: 360px;
+    right: -460px;
+    width: 430px;
     height: 100%;
     background: #ffffff;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
@@ -79,7 +79,7 @@
   }
 
   /* 알림 항목: 컴팩트, 줄 제한 */
-  .notification-item {
+  .notification-panel-item {
     display: flex;
     align-items: center;
     /* 이거 있어야 중앙 정렬 */
@@ -94,16 +94,20 @@
     font-size: 13px;
   }
 
-  .notification-item.unread {
+  .notification-panel-item.unread {
     border-left: 4px solid #2c3e50;
     background: #f5f8fc;
   }
 
-  .notification-item:hover {
+  .notification-panel-item:not(.unread) {
+    margin-left: 3.2px;
+  }
+
+  .notification-panel-item:hover {
     background: #f0f0f0;
   }
 
-  .notification-item .select-checkbox {
+  .notification-panel-item .select-checkbox {
     flex-shrink: 0;
     margin: 0;
     width: 16px;
@@ -112,14 +116,14 @@
     accent-color: #2c3e50;
   }
 
-  .notification-item .content {
+  .notification-panel-item .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 
-  .notification-item .message {
+  .notification-panel-item .message {
     font-weight: 600;
     color: #2c3e50;
     line-height: 1.2;
@@ -130,7 +134,7 @@
     word-break: break-word;
   }
 
-  .notification-item .meta {
+  .notification-panel-item .meta {
     font-size: 11px;
     color: #888;
   }
@@ -238,7 +242,7 @@
 
       $.each(items, function (idx, it) {
         const $item = $('<div>')
-          .addClass('notification-item')
+          .addClass('notification-panel-item')
           .toggleClass('unread', it.unread)
           .attr('tabindex', '0')
           .attr('data-index', idx)
@@ -312,7 +316,7 @@
 
     // 읽음처리 버튼 (읽음 여부 상관 없이 모두 읽음처리 + 체크박스 해제)
     $markAllReadBtn.on('click', function () {
-      $('.notification-item.unread').removeClass('unread');
+      $('.notification-panel-item.unread').removeClass('unread');
       $('.select-checkbox').prop('checked', false);
       updateBadge(0);
     });
@@ -321,7 +325,7 @@
     $deleteSelectedBtn.on('click', function () {
       let unreadDelta = 0;
       $('.select-checkbox:checked').each(function () {
-        const $item = $(this).closest('.notification-item');
+        const $item = $(this).closest('.notification-panel-item');
         if ($item.hasClass('unread')) unreadDelta++;
         $item.remove();
       });

@@ -8,6 +8,7 @@ class Notification {
                 $               : $('#notification-panel')
                 , backdrop      : {$ : $('#notification-backdrop')}
                 , listWrapper   : {$ : $('#notification-panel-list-wrapper')}
+                , item          : {selector : $('.notification-panel-item')}
                 , btn : {
                     close : {$ : $('#btn-notification-panel-close')}
                 }
@@ -42,17 +43,46 @@ class Notification {
         this.obj.panel.backdrop.$.removeClass('active'); 
     }
 
-    fnRenderNotification = () => {
+    fnRenderNotification = async () => {
         this.obj.panel.listWrapper.$.empty();
-        $.ajax({
+        let notificationListResponse = await $.ajax({
             url: '/notification/list'
             , method: 'POST'
             , contentType: 'application/json'
-            , success: (response) => {
-                if(response.resultCode == 'success') {
-                    console.log(response)
-                }
-            }
         })
+
+        if(notificationListResponse.resultCode == 'success'){
+            console.log(notificationListResponse.data);
+            $.each(notificationListResponse.data, (idx, it) => {
+                const $item = $('<div>')
+                    .addClass('notification-panel-item')
+                    .toggleClass('unread', it.flag_read == 'N' ? true : false)
+                    .attr('tabindex', '0')
+                    .attr('data-index', idx)
+                    .html(`
+                        <input type="checkbox" class="select-checkbox" aria-label="선택" />
+                        <div class="content">
+                            <div class="message">${it.message}</div>
+                            <div class="meta">${it.registration_date}</div>
+                        </div>
+                    `);
+                this.obj.panel.listWrapper.$.append($item);
+
+                $item.on('click', function(){
+                    $(this).removeClass('unread');
+                    $.ajax({
+                        url: '/notification/read'
+                        , method: 'POST'
+                        , contentType: 'application/json'
+                        , data: JSON.stringify({notification_uid : it.notification_uid})
+                        , success: (response) => {
+                            if(response.resultCode == 'success'){
+
+                            }
+                        }
+                    })
+                })
+            });
+        }
     }
 }

@@ -1,5 +1,8 @@
 from db.connection import get_session
 from util.sql_loader import load_queries
+from util.util import generate_uid
+from datetime import datetime
+from sqlalchemy import text
 from flask import session as user_session
 import os
 
@@ -16,5 +19,48 @@ def select_notification():
         params = {"user_uid": user_session.get('user_uid')}
         notification = session.execute(notification_sql_map["selectNotification"], params)
         return [dict(row._mapping) for row in notification]
+    finally:
+        session.close()
+
+# -------------------------------------------------------------------
+# 알림 읽음 처리
+# -------------------------------------------------------------------
+def update_notification_read(data):
+    session = get_session()
+    try:
+        params = {"notification_uid": data.get('notification_uid')}
+        session.execute(notification_sql_map["updateNotificationRead"], params)
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+# -------------------------------------------------------------------
+# 알림 등록
+# -------------------------------------------------------------------
+def insert_notification(type, target_uid):
+    session = get_session()
+    try:
+        # 사용자가 많지 않아 모두에게 알림을 준다.
+        user_result = session.execute(notification_sql_map["selectAllUserUid"], {"user_uid" : user_session.get('user_uid')})
+        user_list   = user_result.fetchall()
+        user_list   = [dict(row._mapping) for row in user_list]
+        for user in user_list:
+            notification_params = {
+                "notification_uid"      : generate_uid("NTF")
+                , "user_uid"            : user.get('user_uid')
+                , "type"                : type
+                , "target_uid"          : target_uid
+                , "registration_date"   : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                , "registration_user"   : user_session.get('user_uid')
+            }
+            session.execute(notification_sql_map["insertNotification"], notification_params)
+
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
     finally:
         session.close()
