@@ -4,7 +4,12 @@ SELECT
   , NTF.USER_UID          AS user_uid
   , NTF.TYPE              AS type
   , NTF.TARGET_UID        AS target_uid
-  , CASE WHEN NTF.TYPE = 'COMMENT' THEN U.NICKNAME || '님이 [' || NWS.TITLE || ']에 댓글을 달았어요.' ELSE '' END AS message
+  , CASE 
+      WHEN NTF.TYPE = 'TOPIC'   THEN U.NICKNAME || '님이 토픽 [' || TPC.TOPIC_NAME || ']을(를) 만들었어요.'
+      WHEN NTF.TYPE = 'NEWS'    THEN U.NICKNAME || '님이 새로운 뉴스 [' || NWS.TITLE || ']을(를) 등록했어요.'
+      WHEN NTF.TYPE = 'COMMENT' THEN U.NICKNAME || '님이 [' || NWS.TITLE || ']에 댓글을 달았어요.' 
+    ELSE '' END           AS message
+  , TPC.TOPIC_NAME			AS topic_name
   , NTF.REGISTRATION_USER AS registration_user
   , NTF.FLAG_READ         AS flag_read
   , NTF.FLAG_DELETED      AS flag_deleted
@@ -30,18 +35,17 @@ FROM
   LEFT JOIN USER U
   ON
 	  U.USER_UID = NTF.REGISTRATION_USER
+  LEFT JOIN TOPIC TPC
+  ON
+  	TPC.TOPIC_UID = NTF.TARGET_UID
   LEFT JOIN NEWS NWS
   ON
 	  NWS.NEWS_UID = NTF.TARGET_UID
 WHERE
-  NTF.USER_UID = :user_uid;
-
--- name: updateNotificationRead
-UPDATE NOTIFICATION
-SET
-  FLAG_READ = 'Y'
-WHERE
-  NOTIFICATION_UID = :notification_uid
+  NTF.USER_UID          = :user_uid
+  AND NTF.FLAG_DELETED  = 'N'
+ORDER BY
+  NTF.REGISTRATION_DATE DESC;
 
 -- name: insertNotification
 INSERT INTO NOTIFICATION (
@@ -59,6 +63,20 @@ INSERT INTO NOTIFICATION (
   , :registration_date
   , :registration_user
 );
+
+-- name: updateNotificationRead
+UPDATE NOTIFICATION
+SET
+  FLAG_READ = 'Y'
+WHERE
+  NOTIFICATION_UID IN (__NOTIFICATION_UID_LIST__)
+
+-- name: deleteNotification
+UPDATE NOTIFICATION
+SET
+  FLAG_DELETED = 'Y'
+WHERE
+  NOTIFICATION_UID IN (__NOTIFICATION_UID_LIST__)
 
 -- name: selectAllUserUid
 SELECT

@@ -1,6 +1,6 @@
 from db.connection import get_session
 from util.sql_loader import load_queries
-from util.util import generate_uid
+from util.util import generate_uid, bind_array
 from datetime import datetime
 from sqlalchemy import text
 from flask import session as user_session
@@ -28,8 +28,25 @@ def select_notification():
 def update_notification_read(data):
     session = get_session()
     try:
-        params = {"notification_uid": data.get('notification_uid')}
-        session.execute(notification_sql_map["updateNotificationRead"], params)
+        notification_uid_array = data.get('notification_uid_array', [])
+        sql, bind_params = bind_array(notification_sql_map["updateNotificationRead"].text, "notification_uid_list", notification_uid_array)
+        session.execute(text(sql), bind_params)
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+# -------------------------------------------------------------------
+# 알림 삭제
+# -------------------------------------------------------------------
+def delete_notification(data):
+    session = get_session()
+    try:
+        notification_uid_array = data.get('notification_uid_array', [])
+        sql, bind_params = bind_array(notification_sql_map["deleteNotification"].text, "notification_uid_list", notification_uid_array)
+        session.execute(text(sql), bind_params)
         session.commit()
     except Exception:
         session.rollback()

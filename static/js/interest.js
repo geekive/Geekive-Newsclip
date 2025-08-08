@@ -117,13 +117,16 @@ class Interest {
         /* checkbox event collection :: e */
     }
 
-    fnOpenInterestModal = async () => {
+    fnOpenInterestModal = async (topicName) => {
         this.obj.interest = await this.eventHandlers.selectInterest();
         this.eventHandlers.renderInterest();
         
         // 사용자가 이미 전체 토픽을 저장해놓은 경우 전체선택 버튼이 체크 되도록
         const anyUnchecked = $(this.obj.modal.chk.interest.selector).toArray().some(el => !$(el).is(':checked'));
         this.obj.modal.chk.all.$.prop('checked', !anyUnchecked);
+
+        // 알람에 진입된 경우
+        if(typeof topicName != 'object') this.obj.modal.txt.search.$.val(topicName).trigger('input'); 
 
         this.obj.modal.$.css('display', 'flex');
     }

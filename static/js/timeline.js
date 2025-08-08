@@ -367,11 +367,11 @@ class Timeline {
         });
     }
 
-    fnOpenNewsModal = async (e, mode) => {
-        let $this = $(e.currentTarget);
+    fnOpenNewsModal = async (e, mode, newsUid) => {
         if (mode == MODE.INSERT) {
-            let topicUid = $this.data('topic-uid');
-            let topicName = $this.data('topic-name');
+            let $this       = $(e.currentTarget);
+            let topicUid    = $this.data('topic-uid');
+            let topicName   = $this.data('topic-name');
 
             if (!topicUid.trim()) {
                 return
@@ -392,7 +392,7 @@ class Timeline {
                 return
             }
         } else if (mode == MODE.UPDATE) {
-            e.stopPropagation();
+            if(e != null) e.stopPropagation();
 
             this.obj.modal.news.btn.save.$.hide();
             this.obj.modal.news.btn.edit.$.show();
@@ -403,7 +403,7 @@ class Timeline {
                 url: '/news/detail'
                 , method: 'POST'
                 , contentType: 'application/json'
-                , data: JSON.stringify({ news_uid: $this.data('news-uid') })
+                , data: JSON.stringify({ news_uid: (newsUid == undefined ? $(e.currentTarget).data('news-uid') : newsUid) })
                 , success: async (response) => {
                     if (response.resultCode == 'success') {
                         // 필드에 데이터 입력
@@ -460,13 +460,21 @@ class Timeline {
         this.obj.modal.news.hid.topicUid.$.val('');
         this.obj.modal.news.hid.newsUid.$.val('');
         this.obj.modal.news.txt.topicName.$.val('');
-        this.obj.modal.news.txt.title.$.val('');
-        this.obj.modal.news.txt.date.$.val('');
-        this.obj.modal.news.txt.memo.$.val('');
+        this.obj.modal.news.txt.title.$.val('').prop('readonly', false);
+        this.obj.modal.news.txt.date.$.val('').prop('readonly', false);
+        this.obj.modal.news.txt.memo.$.val('').prop('readonly', false);
+        this.obj.modal.news.rdo.importance.$.prop('disabled', false);
         this.obj.modal.news.rdo.importance.$.first().trigger('click');
         this.obj.modal.news.txt.url.$.val('');
         this.obj.modal.news.$.find(this.obj.modal.news.articleItem.selector).remove();
         this.obj.modal.news.$.find(this.obj.modal.news.comment.selector).remove();
+/*
+                                this.obj.modal.news.txt.title.$.prop('readonly', !isMine);
+                        this.obj.modal.news.txt.date.$.prop('readonly', !isMine);
+                        this.obj.modal.news.txt.memo.$.prop('readonly', !isMine);
+                        this.obj.modal.news.rdo.importance.$.prop('disabled', !isMine);
+                        this.obj.modal.news.btn.edit.$.prop('disabled', !isMine);
+                        this.obj.modal.news.btn.delete.$.prop('disabled', !isMine);*/
     }
 
     fnSaveNews = (mode) => {

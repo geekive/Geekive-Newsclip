@@ -3,6 +3,7 @@ from util.sql_loader import load_queries
 from util.util import generate_uid
 from datetime import datetime
 from flask import session as user_session
+from model.notification_model import insert_notification
 import os
 
 # 쿼리 로딩
@@ -53,6 +54,7 @@ def insert_topic(topic_name):
         raise e
     finally:
         session.close()
+        insert_notification("TOPIC", topic_uid)
     return topic_uid
 
 

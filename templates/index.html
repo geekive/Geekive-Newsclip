@@ -35,7 +35,7 @@
     {% include 'modal/signup.html' %}
     {% include 'modal/interest.html' %}
     {% include 'modal/news.html' %}
-    
+    {% include 'notification.html' %}
     
     <!-- header / search :: s -->
     <div class="header p-cb">
@@ -53,7 +53,7 @@
             {% else %}
                 <div id="notification" class="notification" aria-label="Notifications" role="button" tabindex="0">
                     알림
-                    <span class="badge">13</span>
+                    <span id="notification-badge" class="notification-badge">0</span>
                 </div>
                 <div id="interest" class="interest">
                     내 관심 토픽
@@ -140,9 +140,6 @@
         const signin        = new Signin();
         const interest      = new Interest();
         const signup        = new Signup();
-    </script>
-    {% include 'notification.html' %}
-    <script>
         const notification  = new Notification();
     </script>
 </body>

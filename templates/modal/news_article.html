@@ -2,7 +2,11 @@
     {% for article in article_list %}
         <div class="article-item">
             <input type="checkbox" class="chk-news-modal-article" {% if not article.is_mine %}disabled{% endif %}>
-            <div class="thumbnail" style="background-image:url('{{ article.image_url }}');" onclick="window.open('{{ article.url }}', '_blank')"></div>
+            <img class="thumbnail"
+                src="{{ article.image_url or url_for('static', filename='image/no-image.png') }}"
+                onerror="this.onerror=null; this.src='/static/image/no-image.png';"
+                onclick="window.open('{{ article.url }}', '_blank')"
+                style="cursor:pointer;" />
             <div class="content" onclick="window.open('{{ article.url }}', '_blank')">
                 <div class="title">{{ article.title }}</div>
                 <div class="summary">{{ article.description }}</div>
@@ -18,7 +22,11 @@
 {% else %}
     <div class="article-item">
         <input type="checkbox" class="chk-news-modal-article">
-        <div class="thumbnail" style="background-image:url('{{ og.image_url }}');" onclick="window.open('{{ og.url }}', '_blank')"></div>
+        <img class="thumbnail"
+            src="{{ og.image_url or url_for('static', filename='image/no-image.png') }}"
+            onerror="this.onerror=null; this.src='/static/image/no-image.png';"
+            onclick="window.open('{{ og.url }}', '_blank')"
+            style="cursor:pointer;" />
         <div class="content" onclick="window.open('{{ og.url }}', '_blank')">
             <div class="title">{{ og.title }}</div>
             <div class="summary">{{ og.description }}</div>

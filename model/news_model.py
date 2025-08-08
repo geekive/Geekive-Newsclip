@@ -86,6 +86,7 @@ def insert_news(data):
         raise
     finally:
         session.close()
+        insert_notification("NEWS", news_uid)
 
 # -------------------------------------------------------------------
 # 뉴스 수정
