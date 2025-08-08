@@ -192,7 +192,10 @@ def insert_article(data):
 def select_comment_list(data):
     session = get_session()
     try:
-        param = {"news_uid": data.get('news_uid')}
+        param = {
+            "news_uid"      : data.get('news_uid')
+            , "user_uid"    : user_session.get('user_uid')
+        }
         result = session.execute(news_sql_map["selectCommentList"], param)
         return [dict(row) for row in result.mappings().all()]
     finally:
@@ -219,3 +222,20 @@ def insert_comment(data):
     finally:
         session.close()
         insert_notification("COMMENT", data.get('news_uid'))
+
+# -------------------------------------------------------------------
+# 댓글 삭제
+# -------------------------------------------------------------------
+def delete_comment(data):
+    session = get_session()
+    try:
+        comment_params = {
+            "comment_uid" : data.get('comment_uid')
+        }
+        session.execute(news_sql_map["deleteComment"], comment_params)
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()

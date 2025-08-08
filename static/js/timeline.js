@@ -70,6 +70,7 @@ class Timeline {
                         , addArticle: { $: $('#btn-news-modal-add-article') }
                         , deleteArticle: { $: $('#btn-news-modal-delete-article') }
                         , addComment: { $: $('#btn-news-modal-add-comment') }
+                        , deleteComment: { selector: '.btn-news-modal-delete-comment' }
                     }
                 }
             }
@@ -91,6 +92,7 @@ class Timeline {
             , saveNews: this.fnSaveNews
             , deleteNews: this.fnDeleteNews
             , addComment: this.fnAddComment
+            , bindDeleteCommentEvent: this.fnBindDeleteCommentEvent
         }
         this.init();
     }
@@ -103,6 +105,12 @@ class Timeline {
     addEventListeners() {
         this.obj.document.$.on('click', () => {
             this.obj.topicMenu.$.hide();
+        })
+
+        this.obj.document.$.on('keydown', (e) => {
+            if(e.key === 'Escape' || e.keyCode === 27){
+                this.eventHandlers.closeNewsModal();
+            }
         })
 
         this.obj.btn.searchToggle.$.on('click', this.eventHandlers.openSearchArea.bind(this));
@@ -418,6 +426,7 @@ class Timeline {
                         }).first().prop('checked', true);
                         this.obj.modal.news.articleWrapper.$.html(news.article_list_html);
                         this.obj.modal.news.commentWrapper.$.html(news.comment_list_html);
+                        this.eventHandlers.bindDeleteCommentEvent();
 
                         // 비로그인시 입력 필드 및 버튼 비활성화
                         let isSigned = await IS_SIGNED()
@@ -581,7 +590,11 @@ class Timeline {
     fnAddComment = () => {
         let params = {
             news_uid    : this.obj.modal.news.hid.newsUid.$.val()
-            , comment   : this.obj.modal.news.txt.comment.$.val()
+            , comment   : this.obj.modal.news.txt.comment.$.val().trim()
+        }
+        if(!params.comment){
+            alert('댓글을 입력하세요.');
+            return
         }
         $.ajax({
             url: '/news/comment'
@@ -589,13 +602,32 @@ class Timeline {
             , contentType: 'application/json'
             , data: JSON.stringify(params)
             , success: (response) => {
-                console.log(response);
                 if (response.resultCode == 'success') {
                     $(this.obj.modal.news.comment.selector).remove();
                     this.obj.modal.news.txt.comment.$.val('');
                     this.obj.modal.news.commentWrapper.$.html(response.data);
+                    this.eventHandlers.bindDeleteCommentEvent();
                 }
             }
+        })
+    }
+
+    fnBindDeleteCommentEvent = () => {
+        $(this.obj.modal.news.btn.deleteComment.selector).off('click').on('click', (e) => {
+            if(confirm('댓글을 삭제하시겠습니까?')){
+                $.ajax({
+                    url: '/news/comment/delete'
+                    , method: 'POST'
+                    , contentType: 'application/json'
+                    , data: JSON.stringify({comment_uid : $(e.currentTarget).data('comment-uid')})
+                    , success: (response) => {
+                        if(response.resultCode == 'success') {
+                            $(e.currentTarget).parent().remove();
+                        }
+                    }
+                })
+            }
+            
         })
     }
     /* timeline :: e */

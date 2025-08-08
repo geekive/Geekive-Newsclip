@@ -1,6 +1,9 @@
 {% if comment_list is defined %}
     {% for comment in comment_list %}
         <div class="comment">
+            {% if comment.is_mine == 1 %}
+                <button class="btn-news-modal-delete-comment" data-comment-uid="{{ comment.comment_uid }}">×</button>
+            {% endif %}
             <div class="comment-meta">
                 <span class="comment-author">{{ comment.nickname }}</span>
                 <span class="comment-date">{{ comment.registration_date }}</span>

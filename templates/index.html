@@ -142,6 +142,116 @@
         const signup        = new Signup();
         const notification  = new Notification();
     </script>
+
+    <!-- 공지 사항 -->
+    <!-- 공지창 -->
+    <div id="notice-popup" class="notice-popup" style="display: none;">
+    <div class="notice-content">
+        <p class="notice-title">📢 공지사항</p>
+        <p class="notice-body">
+            Newsclip을 이용해주셔서 감사합니다.<br/><br/>
+
+            뉴스 제목은 뉴스 내용이 잘 드러날 수 있도록 작성하실 것을 "권장"드립니다. 
+            시간이 지나도 제목만으로 내용을 파악할 수 있어, 보관 및 활용에 큰 도움이 됩니다.<br/><br/>
+            그러나 저희 Newsclip은 사용자 여러분의 자유의지를 존중하기때문에, 기존처럼 어떠한 작명도 허용할것을 약속드립니다.<br/>
+            단, 음란·비속어 등 부적절한 표현은 운영 방침에 따라 수정될 수 있습니다.<br/><br/>
+
+            감사합니다.
+        </p>
+
+        <div class="notice-options">
+        <label>
+            <input type="checkbox" id="hide-for-week"> 일주일 동안 보지 않기
+        </label>
+        <button id="close-notice">닫기</button>
+        </div>
+    </div>
+    </div>
+<style>
+.notice-popup {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 400px;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  font-family: 'Segoe UI', sans-serif;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.notice-content {
+  padding: 16px 20px;
+}
+
+.notice-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 10px;
+}
+
+.notice-body {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: black;
+  line-height: 1.4;
+}
+
+.notice-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.notice-options input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.notice-options button {
+  padding: 5px 12px;
+  font-size: 13px;
+  border: none;
+  background-color: #2c3e50;;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.notice-options button:hover {
+  background-color: #0056b3;
+}
+</style>
+<script>
+$(document).ready(function() {
+  const noticeKey = "hide_notice_until";
+
+  function shouldShowNotice() {
+    const hideUntil = localStorage.getItem(noticeKey);
+    if (!hideUntil) return true;
+
+    const now = new Date().getTime();
+    return now > parseInt(hideUntil, 10);
+  }
+
+  if (shouldShowNotice()) {
+    $('#notice-popup').show();
+  }
+
+  $('#close-notice').on('click', function() {
+    if ($('#hide-for-week').is(':checked')) {
+      const oneWeekLater = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
+      localStorage.setItem(noticeKey, oneWeekLater.toString());
+    }
+    $('#notice-popup').fadeOut();
+  });
+});
+</script>
 </body>
 
 </html>

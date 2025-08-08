@@ -444,6 +444,8 @@ html {
     user-select: none;
     flex-shrink: 0;
 
+    text-align: center;
+
     white-space: normal;
     word-break: break-word;
 }
@@ -846,6 +848,7 @@ html {
 }
 
 .news-modal-overlay .view-modal .modal-comment .comment-section .comment {
+    position: relative; /* 삭제 버튼 위치 기준점 */
     background: #f0f0f0;
     border-radius: 8px;
     padding: 10px 14px;
@@ -876,6 +879,23 @@ html {
 .news-modal-overlay .view-modal .modal-comment .comment-section .comment .comment-text {
     white-space: pre-wrap;
     line-height: 1.4;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-section .comment .btn-news-modal-delete-comment {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.news-modal-overlay .view-modal .modal-comment .comment-section .comment .btn-news-modal-delete-comment:hover {
+    color: red;
 }
 
 .news-modal-overlay .view-modal .modal-comment .comment-input-area {

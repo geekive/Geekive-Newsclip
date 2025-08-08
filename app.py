@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # 내부 모듈 import
 from model.timeline_model import select_timeline_list
-from model.news_model import select_news_detail, select_article_list, insert_article, insert_news, update_news, delete_news, select_comment_list, insert_comment
+from model.news_model import select_news_detail, select_article_list, insert_article, insert_news, update_news, delete_news, select_comment_list, insert_comment, delete_comment
 from model.topic_model import insert_topic, delete_topic
 from model.sign_model import check_nickname, check_email, send_code_mail, insert_user, check_user
 from model.interest_model import select_topic, upsert_interest, update_interest_order
@@ -137,6 +137,16 @@ def news_comment():
         'resultCode': 'success',
         'resultMessage': '댓글이 저장되었습니다.',
         'data' : html
+    })
+
+@app.route("/news/comment/delete", methods=['POST'])
+def news_comment_delete():
+    data = request.get_json()
+    delete_comment(data)
+
+    return jsonify({
+        'resultCode': 'success',
+        'resultMessage': ''
     })
 
 # ------------------------------
@@ -305,7 +315,6 @@ def notification_delete():
         'resultCode': 'success',
         'resultMessage': ''
     })
-
 
 # ------------------------------
 # 앱 실행

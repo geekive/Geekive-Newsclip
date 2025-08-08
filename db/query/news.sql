@@ -130,13 +130,22 @@ SELECT
   , C.REGISTRATION_DATE   AS registration_date
   , C.REGISTRATION_USER   AS registration_user
   , U.NICKNAME            AS nickname
+  , CASE 
+      WHEN 
+        C.REGISTRATION_USER = :user_uid
+      THEN 
+        TRUE
+      ELSE 
+        FALSE
+    END                   AS is_mine
 FROM 
   COMMENT C
   LEFT JOIN USER U
   ON
 	U.USER_UID = C.REGISTRATION_USER
 WHERE
-  C.NEWS_UID = :news_uid
+  C.NEWS_UID          = :news_uid
+  AND C.FLAG_DELETED  = 'N'
 ORDER BY 
   C.REGISTRATION_DATE DESC;
 
@@ -154,3 +163,10 @@ INSERT INTO COMMENT (
   , :registration_date
   , :registration_user
 );
+
+-- name: deleteComment
+UPDATE COMMENT
+SET
+  FLAG_DELETED = 'Y'
+WHERE
+  COMMENT_UID = :comment_uid;
