@@ -38,6 +38,13 @@ INSERT INTO INTEREST (
     , 0
 );
 
+-- name: updateTopic
+UPDATE TOPIC
+SET
+    TOPIC_NAME = :topic_name
+WHERE
+    TOPIC_UID = :topic_uid;
+
 -- name: deleteTopic
 UPDATE TOPIC
 SET

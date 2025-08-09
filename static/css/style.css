@@ -374,6 +374,15 @@ html {
     cursor: pointer;
 }
 
+.timeline-container #timeline-body .timeline-row-container .topic-item .btn-topic-edit-save {
+    fill: #fafafa;
+    width: 16px;
+    height: 16px;
+    margin-top: 8px;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
 .timeline-container #timeline-body .timeline-row-container .topic-item .btn-topic-delete-save {
     fill: #fafafa;
     width: 16px;

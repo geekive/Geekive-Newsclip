@@ -57,6 +57,23 @@ def insert_topic(topic_name):
         insert_notification("TOPIC", topic_uid)
     return topic_uid
 
+# -------------------------------------------------------------------
+# 토픽 수정
+# -------------------------------------------------------------------
+def edit_topic(data):
+    session = get_session()
+    try:
+        topic_params = {
+            "topic_uid"     : data.get('topic_uid')
+            , "topic_name"  : data.get('topic_name')
+        }
+        session.execute(topic_sql_map["updateTopic"], topic_params)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
 
 # -------------------------------------------------------------------
 # 토픽 삭제

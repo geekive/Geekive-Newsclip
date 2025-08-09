@@ -29,6 +29,8 @@ class Timeline {
                 , topicNew: { $: $('#btn-topic-new') }
                 , topicNewSave: { selector: '#btn-topic-new-save' }
                 , topicNewCancel: { selector: '#btn-topic-new-cancel' }
+                , topicEdit: { $: $('#btn-topic-edit') }
+                , topicEditSave: { selector: '.btn-topic-edit-save' }
                 , topicDelete: { $: $('#btn-topic-delete') }
                 , topicDeleteSave: { selector: '.btn-topic-delete-save' }
             }
@@ -80,6 +82,8 @@ class Timeline {
             , openSearchArea: this.fnOpenSearchArea
             , openTopicMenu: this.fnOpenTopicMenu
             , getTimelineTemplate: this.fnGetTimelineTemplate
+            , showTopicEditSaveButton: this.fnShowTopicEditSaveButton
+            , editTopic: this.fnEditTopic
             , showTopicDeleteSaveButton: this.fnShowTopicDeleteSaveButton
             , deleteTopic: this.fnDeleteTopic
             , syncDateWidth: this.fnSyncDateWidth
@@ -121,8 +125,10 @@ class Timeline {
         
         this.obj.btn.topicMenu.$.on('click', this.eventHandlers.openTopicMenu.bind(this));
         this.obj.btn.topicNew.$.on('click', this.eventHandlers.getTimelineTemplate.bind(this));
+        this.obj.btn.topicEdit.$.on('click', this.eventHandlers.showTopicEditSaveButton.bind(this));
         this.obj.btn.topicDelete.$.on('click', this.eventHandlers.showTopicDeleteSaveButton.bind(this));
 
+        this.obj.document.$.on('click', this.obj.btn.topicEditSave.selector, this.eventHandlers.editTopic);
         this.obj.document.$.on('click', this.obj.btn.topicDeleteSave.selector, this.eventHandlers.deleteTopic);
         this.obj.document.$.on('click', this.obj.timelineRow.selector, (e) => this.eventHandlers.openNewsModal(e, MODE.INSERT));
         this.obj.document.$.on('click', this.obj.newsCard.selector, (e) => this.eventHandlers.openNewsModal(e, MODE.UPDATE));
@@ -204,9 +210,12 @@ class Timeline {
         }
 
         let isDisabled = this.obj.btn.topicNew.$.data('disabled');
+        let isEditOpen = this.obj.btn.topicEdit.$.data('open');
         let isDeleteOpen = this.obj.btn.topicDelete.$.data('open');
         if (isDisabled) {
             alert('이미 토픽 생성 행이 존재합니다.');
+        } else if (isEditOpen) {
+            alert('토픽 수정 중에 생성 기능이 제한됩니다.');
         } else if (isDeleteOpen) {
             alert('토픽 삭제 중에 생성 기능이 제한됩니다.');
         } else {
@@ -262,6 +271,53 @@ class Timeline {
         }
     }
 
+    fnShowTopicEditSaveButton = async () => {
+        if(!await IS_SIGNED()){
+            alert('로그인이 필요한 기능입니다.');
+            return
+        }
+
+        let isDisabled = this.obj.btn.topicNew.$.data('disabled');
+        if (isDisabled) {
+            alert('토픽 생성 행이 존재하여 수정 기능이 제한됩니다.');
+            return
+        }
+
+        let isDeleteOpen = this.obj.btn.topicDelete.$.data('open');
+        if (isDeleteOpen) {
+            alert('토픽 삭제 중에 수정 기능이 제한됩니다.');
+            return
+        }
+
+        let isEditOpen = this.obj.btn.topicEdit.$.data('open');
+        this.obj.btn.topicEdit.$.data('open', !isEditOpen);
+
+        $(this.obj.txt.topicName.selector).toggle();
+        $(this.obj.btn.topicEditSave.selector).toggle();
+        $(this.obj.btn.topicEditSave.selector).siblings('.topic-name-area').toggle();
+        this.obj.btn.topicEdit.$.html(isEditOpen ? '수정' : '수정 종료');
+    }
+
+    fnEditTopic = (e) => {
+        let $this = $(e.currentTarget);
+        let params = {
+            topic_uid       : $this.data('topic-uid')
+            , topic_name    : $this.siblings('.txt-topic-name').val()
+        }
+        $.ajax({
+            url: '/topic/edit'
+            , method: 'POST'
+            , contentType: 'application/json'
+            , data: JSON.stringify(params)
+            , success: (response) => {
+                if (response.resultCode == 'success') {
+                    alert(response.resultMessage);
+                    $this.siblings('.topic-name-area').html(params.topic_name);
+                }
+            }
+        })
+    }
+
     fnShowTopicDeleteSaveButton = async () => {
         if(!await IS_SIGNED()){
             alert('로그인이 필요한 기능입니다.');
@@ -271,6 +327,12 @@ class Timeline {
         let isDisabled = this.obj.btn.topicNew.$.data('disabled');
         if (isDisabled) {
             alert('토픽 생성 행이 존재하여 삭제 기능이 제한됩니다.');
+            return
+        }
+
+        let isEditOpen = this.obj.btn.topicEdit.$.data('open');
+        if (isEditOpen) {
+            alert('토픽 수정 중에 삭제 기능이 제한됩니다.');
             return
         }
 
