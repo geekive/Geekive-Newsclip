@@ -506,13 +506,14 @@ class Timeline {
                         this.obj.modal.news.btn.addComment.$.prop('disabled', !isSigned);
 
                         // 사용자가 등록한 뉴스가 아니면 모달 내 왼쪽 뉴스 정보란을 비활성화
-                        let isMine = news.is_mine;
-                        this.obj.modal.news.txt.title.$.prop('readonly', !isMine);
-                        this.obj.modal.news.txt.date.$.prop('readonly', !isMine);
-                        this.obj.modal.news.txt.memo.$.prop('readonly', !isMine);
-                        this.obj.modal.news.rdo.importance.$.prop('disabled', !isMine);
-                        this.obj.modal.news.btn.edit.$.prop('disabled', !isMine);
-                        this.obj.modal.news.btn.delete.$.prop('disabled', !isMine);
+                        // 관리자면 관리자가 등록한게 아니여도 활성화시킴
+                        let isAbled = IS_ADMIN || news.is_mine;
+                        this.obj.modal.news.txt.title.$.prop('readonly', !isAbled);
+                        this.obj.modal.news.txt.date.$.prop('readonly', !isAbled);
+                        this.obj.modal.news.txt.memo.$.prop('readonly', !isAbled);
+                        this.obj.modal.news.rdo.importance.$.prop('disabled', !isAbled);
+                        this.obj.modal.news.btn.edit.$.prop('disabled', !isAbled);
+                        this.obj.modal.news.btn.delete.$.prop('disabled', !isAbled);
 
                         // 모달 오픈
                         this.obj.modal.news.$.css('display', 'flex');

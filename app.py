@@ -248,7 +248,8 @@ def signin():
             'data'          : ''
         })
     
-    session['user_uid'] = user.get('user_uid')
+    session['user_uid']     = user.get('user_uid')
+    session['flag_admin']   = user.get('flag_admin')
     return jsonify({
         'resultCode': 'success',
         'resultMessage': '',

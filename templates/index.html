@@ -28,6 +28,7 @@
                 return response.signed
             });
         }
+        const IS_ADMIN = '{{ 1 if session.flag_admin == 1 else 0 }}' == 1;
     </script>
 </head>
 <body>

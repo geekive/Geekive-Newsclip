@@ -37,6 +37,7 @@ SELECT
 	, NICKNAME		AS nickname
 	, EMAIL			AS email
 	, PASSWORD		AS password
+	, FLAG_ADMIN	AS flag_admin
 FROM
 	USER
 WHERE
