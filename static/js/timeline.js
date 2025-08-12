@@ -171,6 +171,9 @@ class Timeline {
                 if(this.obj.btn.topicDelete.$.data('open')){
                     $(this.obj.btn.topicDeleteSave.selector).toggle();
                 }
+                this.obj.body.$.animate({
+                    scrollLeft: this.obj.body.$.width()
+                }, 1000);
             }
         })
 
