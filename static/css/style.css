@@ -118,7 +118,7 @@ html {
     height: 120px;
     border-bottom: 1px solid #fafafa;
     border-top: 1px solid #fafafa;
-    
+
 }
 
 .search-wrapper .search-option-bar {
@@ -164,7 +164,8 @@ html {
 .search-wrapper .search-option input[type="date"]:focus {
     outline: none;
     box-shadow: none;
-    border-color: #ccc; /* 기존 테두리 유지 */
+    border-color: #ccc;
+    /* 기존 테두리 유지 */
 }
 
 /* 검색 옵션 + 검색어 묶음 */
@@ -195,9 +196,11 @@ html {
 /* 체크박스 */
 .search-wrapper .search-option.checkbox {
     flex-direction: row;
-    align-items: center; /* 세로 중앙 정렬 */
+    align-items: center;
+    /* 세로 중앙 정렬 */
     gap: 8px;
-    margin-top: 0; /* 기본 마진 제거 */
+    margin-top: 0;
+    /* 기본 마진 제거 */
     margin-bottom: 10px;
 }
 
@@ -659,36 +662,36 @@ html {
     display: none;
 }
 
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance1:not(:disabled):hover + label[for="importance1"],
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance1:checked + label[for="importance1"] {
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance1:not(:disabled):hover+label[for="importance1"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance1:checked+label[for="importance1"] {
     background-color: #2c3e50;
     border-color: #2c3e50;
     color: white;
 }
 
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance2:not(:disabled):hover + label[for="importance2"],
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance2:checked + label[for="importance2"] {
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance2:not(:disabled):hover+label[for="importance2"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance2:checked+label[for="importance2"] {
     background-color: darkgreen;
     border-color: darkgreen;
     color: white;
 }
 
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance3:not(:disabled):hover + label[for="importance3"],
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance3:checked + label[for="importance3"] {
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance3:not(:disabled):hover+label[for="importance3"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance3:checked+label[for="importance3"] {
     background-color: darkblue;
     border-color: darkblue;
     color: white;
 }
 
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance4:not(:disabled):hover + label[for="importance4"],
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance4:checked + label[for="importance4"] {
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance4:not(:disabled):hover+label[for="importance4"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance4:checked+label[for="importance4"] {
     background-color: darkmagenta;
     border-color: darkmagenta;
     color: white;
 }
 
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance5:not(:disabled):hover + label[for="importance5"],
-.news-modal-overlay .view-modal .modal-left .importance-button-group #importance5:checked + label[for="importance5"] {
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance5:not(:disabled):hover+label[for="importance5"],
+.news-modal-overlay .view-modal .modal-left .importance-button-group #importance5:checked+label[for="importance5"] {
     background-color: darkred;
     border-color: darkred;
     color: white;
@@ -724,12 +727,13 @@ html {
 }
 
 .news-modal-overlay .view-modal .modal-middle .url-input-group .btn-news-modal-add-url:disabled,
-.news-modal-overlay .view-modal .modal-middle .url-input-group .btn-news-modal-open-check:disabled{
+.news-modal-overlay .view-modal .modal-middle .url-input-group .btn-news-modal-open-check:disabled {
     background-color: #ccc;
     color: #666;
     cursor: not-allowed;
     border: none;
-    opacity: 0.7; /* 선택적: 흐릿하게 보이게 */
+    opacity: 0.7;
+    /* 선택적: 흐릿하게 보이게 */
 }
 
 /* === 기사 리스트 === */
@@ -857,7 +861,8 @@ html {
 }
 
 .news-modal-overlay .view-modal .modal-comment .comment-section .comment {
-    position: relative; /* 삭제 버튼 위치 기준점 */
+    position: relative;
+    /* 삭제 버튼 위치 기준점 */
     background: #f0f0f0;
     border-radius: 8px;
     padding: 10px 14px;
@@ -1237,7 +1242,8 @@ html {
 }
 
 .interest-modal .form-group input[type="checkbox"]:checked {
-    accent-color: #2c3e50;  /* 원하는 색으로 설정 */
+    accent-color: #2c3e50;
+    /* 원하는 색으로 설정 */
 }
 
 .interest-modal .interest-list {
@@ -1313,3 +1319,280 @@ html {
 }
 
 /* 내 관심토픽 모달 :: e */
+
+/* 알림 :: s */
+.notification .notification-badge {
+    position: absolute;
+    min-width: 17px;
+    min-height: 17px;
+    top: 22px;
+    right: 324px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    line-height: 1;
+    opacity: 0;
+}
+
+.notification-panel {
+    position: fixed;
+    top: 0;
+    right: -460px;
+    width: 430px;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+    transition: right 0.35s ease;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #2c3e50;
+    overflow: hidden;
+}
+
+.notification-panel.open {
+    right: 0;
+}
+
+.notification-panel .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    padding: 0 16px;
+    background: #2c3e50;
+    color: #fafafa;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+}
+
+.notification-panel .panel-header .title {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.notification-panel .panel-header button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #fafafa;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.notification-panel .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    background: #fafafa;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notification-panel-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+}
+
+.notification-panel-item.unread {
+    border-left: 4px solid #2c3e50;
+    background: #f5f8fc;
+}
+
+.notification-panel-item:not(.unread) {
+    margin-left: 3.2px;
+}
+
+.notification-panel-item:hover {
+    background: #f0f0f0;
+}
+
+.notification-panel-item .chk-notification-panel-item {
+    flex-shrink: 0;
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #2c3e50;
+}
+
+.notification-panel-item .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.notification-panel-item .message {
+    font-weight: 600;
+    color: #2c3e50;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.notification-panel-item .meta {
+    font-size: 11px;
+    color: #888;
+}
+
+.notification-panel .panel-footer {
+    height: 80px;
+    padding: 0 16px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+.notification-panel .panel-footer button {
+    flex: 0 0 100px;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 0;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#btn-notification-panel-delete {
+    background: #e74c3c !important;
+}
+
+#btn-notification-panel-delete:hover {
+    background: #c0392b !important;
+}
+
+.notification-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+    z-index: 1050;
+}
+
+.notification-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 알림 :: e */
+
+/* 로그인 모달 :: s */
+.signin-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.signin-modal-overlay .signin-modal {
+    background: white;
+    width: 400px;
+    border-radius: 10px;
+    padding: 30px 30px 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.signin-modal-overlay .signin-modal h2 {
+    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.signin-modal-overlay .signin-modal .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.signin-modal-overlay .signin-modal .form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.signin-modal-overlay .signin-modal .form-group input {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.signin-modal-overlay .signin-modal .signin-modal-message {
+    height: 20px;
+    font-size: 13px;
+    color: red;
+    text-align: center;
+    margin-top: 6px;
+    visibility: hidden;
+}
+
+.signin-modal-overlay .signin-modal .signin-modal-message.visible {
+    visibility: visible;
+}
+
+.signin-modal-overlay .signin-modal .signin-modal-message.green {
+    color: green;
+}
+
+.signin-modal-overlay .signin-modal .btn-signin-modal-signin,
+.signin-modal-overlay .signin-modal .btn-signin-modal-close {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+.signin-modal-overlay .signin-modal .btn-signin-modal-signin {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.signin-modal-overlay .signin-modal .btn-signin-modal-close {
+    background-color: #777;
+    color: white;
+}
+/* 로그인 모달 :: e */
